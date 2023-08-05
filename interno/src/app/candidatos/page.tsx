@@ -1,19 +1,22 @@
-'use client';
-import React, { SetStateAction, useState } from 'react';
-import axios from "axios";
-import { useRouter } from 'next/navigation';
-import TabelaCandidatos from '@/src/components/Tabelas/CandidatoTable';
+import { authOptions } from '@/src/lib/auth';
+import TabelaCandidatos from '../components/Tabelas/CandidatoTable';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation'
 
 
-export default function CandidatosPage() {
+export default async function CandidatosPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect('/');
+  }
 
   return (
     <>
-     <div className='bg-[#003A65] h-screen flex justify-center flex-col items-center'>
-        <h2 className='text-4xl mb-7'>Candidatos Cadastrados</h2>
+      <div className="bg-[#003A65] h-screen flex justify-center flex-col items-center">
+        <h2 className="text-4xl mb-7">Candidatos Cadastrados</h2>
         <TabelaCandidatos></TabelaCandidatos>
-     </div>
-       
+      </div>
     </>
   );
 }

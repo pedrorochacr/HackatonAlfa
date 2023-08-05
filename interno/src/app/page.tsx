@@ -1,14 +1,10 @@
-'use client';
-
-import Image from 'next/image';
-import { useSession } from 'next-auth/react';
+import Banner from './components/Banner/Banner';
+import Menu from './components/Menu';
 
 export default function Home() {
-  const { data: session } = useSession();
   return (
     <>
-      <h1>Client Session</h1>
-      <pre>{JSON.stringify(session)}</pre>
+      <Banner />
     </>
   );
 }
