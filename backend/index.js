@@ -12,7 +12,15 @@ app.use(express.json());
 const port = process.env.PORT;
 
 console.log('Connected to PlanetScale!')
-connection.end()
+
+
+const candidatoRoutes = require('./candidatoRoutes');
+const reportRoutes = require('./reportRoutes');
+
+
+app.use('/candidato', candidatoRoutes);
+app.use('/report', reportRoutes);
+
 
 
 

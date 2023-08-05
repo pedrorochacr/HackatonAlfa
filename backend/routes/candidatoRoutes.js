@@ -64,7 +64,6 @@ router.post('/cadastrarCandidato', (req, res) => { // rota definida com post par
         res.status(500).json({ error: 'Erro ao inserir os dados no banco de dados.' });
       } else {
         console.log('Candidato cadastrado com sucesso!');
-
         if(dependentes){ // se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {
                 if (err) {
@@ -100,3 +99,7 @@ async function insertDependentes (idCandidato, dependentes) {
     
   }
   
+
+
+
+module.exports = router;
