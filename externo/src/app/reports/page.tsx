@@ -161,7 +161,7 @@ export default function ReportPage() {
         </p>
       </div>
       <form className="mx-auto mt-16 max-w-xl sm:mt-10" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="gap-x-8 gap-y-6">
           {!anonimo && (
             <>
               <div>
@@ -176,7 +176,7 @@ export default function ReportPage() {
                     value={nome}
                     onChange={handleNomeChange}
                     autoComplete="given-name"
-                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
                   />
                 </div>
               </div>
@@ -191,8 +191,7 @@ export default function ReportPage() {
                     id="centro-de-custos"
                     value={centroDeCustos}
                     onChange={handleCentroDeCustosChange}
-                    autoComplete="family-name"
-                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
                   />
                 </div>
               </div>
@@ -207,8 +206,7 @@ export default function ReportPage() {
                     id="ref-area-atuacao"
                     value={refAreaAtuacao}
                     onChange={handleRefAreaAtuacaoChange}
-                    autoComplete="email"
-                    className="block w-300 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
                   />
                 </div>
               </div>
@@ -252,7 +250,7 @@ export default function ReportPage() {
                 value={descricao}
                 onChange={handleDescricaoChange}
                 rows={4}
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
               />
               {descricaoError && <p className="mt-1 text-red-600">{descricaoError}</p>}
             </div>
