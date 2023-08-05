@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function ReportPage() {
   const [nome, setNome] = useState('');
@@ -10,11 +10,15 @@ export default function ReportPage() {
   const [fotos, setFotos] = useState<{ file: File | null; filled: boolean }[]>([
     { file: null, filled: false },
   ]);
-  const [localizacao, setLocalizacao] = useState<String>('');
+  const [localizacao, setLocalizacao] = useState<String | null>(null);
   const [anonimo, setAnonimo] = useState(false);
   const [descricaoError, setDescricaoError] = useState('');
   const [foto1Error, setFoto1Error] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    handleGetLocation();
+  }, [])
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
@@ -139,7 +143,9 @@ export default function ReportPage() {
         }
       });
 
-      console.log(nome, centroDeCustos, refAreaAtuacao, descricao, localizacao);
+      if (!localizacao) {
+        handleGetLocation();
+      }
 
       const res = await fetch('http://localhost:4000/report/cadastrarReport', {
         method: 'POST',
