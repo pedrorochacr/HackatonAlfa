@@ -6,7 +6,7 @@ import React from 'react';
 const Home = () => {
   return (
       <>
-        <Menu></Menu>
+        
         <Banner></Banner>
       </>
       

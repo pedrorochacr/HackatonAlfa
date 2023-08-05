@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function Menu(){
   return (
-    <nav className="bg-[#003A65] p-4 flex items-center justify-between">
+    <nav className="bg-[#003A65] p-4  flex items-center justify-between">
       {/* Logo */}
       <div className="flex items-center space-x-2">
           <img src="/assets/logo.png" alt="Logo da Empresa" className="h-[50px]" />

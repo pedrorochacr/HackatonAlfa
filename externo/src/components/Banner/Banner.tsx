@@ -5,7 +5,7 @@ import "./Banner.css"
 export default function Banner(){
   return (
         <>
-            <div className="bg-[url('/assets/banner.jpg')] h-[650px] bg-cover bg-center flex items-center justify-center">
+            <div className="bg-[url('/assets/banner.jpg')] h-[600px] bg-cover bg-center flex items-center justify-center">
                 
                 <div className="absolute gradient pt-20 flex w-screen bg-gradient-to-b from-transparent via-[#003A65] to-[#003A65] h-3/4">
                     <img src="/assets/logo.png" alt="Logo da Empresa" className="h-[220px]" />
