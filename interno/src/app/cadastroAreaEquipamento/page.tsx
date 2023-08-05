@@ -1,14 +1,25 @@
 'use client';
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
-export default function cadastroAreaEquipamentoPage() {
+export default function CadastroAreaEquipamentoPage() {
   const [codigo, setCodigo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('NÃO');
   const [anexo, setAnexo] = useState<File | null>(null);
   const router = useRouter();
+  const { data: session, status: sessionStatus } = useSession();
+
+  if (sessionStatus === 'loading') {
+    return <p>Carregando...</p>;
+  }
+
+  if (!session) {
+    router.push('/');
+  }
 
   const handleCodigoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCodigo(event.target.value);
@@ -42,7 +53,10 @@ export default function cadastroAreaEquipamentoPage() {
         formData.append('anexo', anexo);
       }
       // Faça a requisição para o backend aqui usando axios ou fetch
-      await axios.post('http://localhost:4000/cadastrarAreaOuEquipamento/cadastrarAreaOuEquipamento', formData);
+      await axios.post(
+        'http://localhost:4000/cadastrarAreaOuEquipamento/cadastrarAreaOuEquipamento',
+        formData
+      );
 
       alert('Área ou equipamento cadastrado com sucesso');
       router.push('/');
@@ -106,38 +120,38 @@ export default function cadastroAreaEquipamentoPage() {
             </div>
           </div>
           <div className="mt-2.5">
-                <label
-                    htmlFor="descricao"
-                    className="block text-sm font-semibold leading-6 text-gray-900"
-                    >
-                    Área ou Equipamento liberado?
-                </label>
+            <label
+              htmlFor="descricao"
+              className="block text-sm font-semibold leading-6 text-gray-900"
+            >
+              Área ou Equipamento liberado?
+            </label>
             <div className="flex items-center">
-                <label className="inline-flex items-center mr-4">
+              <label className="inline-flex items-center mr-4">
                 <input
-                    type="radio"
-                    name="status"
-                    value="SIM"
-                    checked={status === 'SIM'}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="form-radio text-indigo-600 h-4 w-4"
+                  type="radio"
+                  name="status"
+                  value="SIM"
+                  checked={status === 'SIM'}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="form-radio text-indigo-600 h-4 w-4"
                 />
                 <span className="ml-2 text-[#003A65]">Sim</span>
-                </label>
-                <label className="inline-flex items-center">
+              </label>
+              <label className="inline-flex items-center">
                 <input
-                    type="radio"
-                    name="status"
-                    value="NÃO"
-                    checked={status === 'NÃO'}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="form-radio text-indigo-600 h-4 w-4"
+                  type="radio"
+                  name="status"
+                  value="NÃO"
+                  checked={status === 'NÃO'}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="form-radio text-indigo-600 h-4 w-4"
                 />
                 <span className="ml-2 text-[#003A65]">Não</span>
-                </label>
+              </label>
             </div>
-        </div>
-        <div className="sm:col-span-2">
+          </div>
+          <div className="sm:col-span-2">
             <label
               htmlFor="anexo"
               className="block text-sm font-semibold leading-6 text-gray-900"
