@@ -168,9 +168,6 @@ router.post(
 );
 router.get('/',async (req, res) => {
     // Rota que cadastra um report no banco de dados
-    
-   
-
     const connection = createConnection();
     connection.query(
       'select * from CANDIDATO',
@@ -188,6 +185,23 @@ router.get('/',async (req, res) => {
       }
     );
   }
+);
+router.put('/aprovaCandidato',async (req, res) => {
+  const candidatoId = req.query.id;
+  const query =
+    "UPDATE CANDIDATO SET admitido = 1 where id = $1";
+
+    connection
+    .query(query, [candidatoId])
+    .then(() => {
+      res.status(201).send("Candidato aprovado com sucesso");
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("Erro interno do servidor");
+    });
+  
+}
 );
 async function insertDependentes(idCandidato, dependentes) {
   // Monta os valores para o INSERT na tabela "dependentes"

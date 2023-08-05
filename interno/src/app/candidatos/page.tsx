@@ -9,8 +9,8 @@ export default function CandidatosPage() {
 
   return (
     <>
-     <div>
-        <h2>Candidatos Cadastrados</h2>
+     <div className='bg-[#003A65] h-screen flex justify-center flex-col items-center'>
+        <h2 className='text-4xl mb-7'>Candidatos Cadastrados</h2>
         <TabelaCandidatos></TabelaCandidatos>
      </div>
        
