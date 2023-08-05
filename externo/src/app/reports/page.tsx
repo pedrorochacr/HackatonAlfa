@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function ReportPage() {
   const [nome, setNome] = useState('');
@@ -13,15 +15,15 @@ export default function ReportPage() {
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
   };
-  
+
   const handleCentroDeCustosChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCentroDeCustos(event.target.value);
   };
-  
+
   const handleRefAreaAtuacaoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRefAreaAtuacao(event.target.value);
   };
-  
+
   const handleDescricaoChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescricao(event.target.value);
   };
@@ -36,10 +38,19 @@ export default function ReportPage() {
   };
 
   const handleAddFoto = () => {
-    setFotos([...fotos, { file: null, filled: false }]);
+    if (fotos.length < 3) {
+      setFotos([...fotos, { file: null, filled: false }]);
+    }
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleRemoveFoto = (index: number) => {
+    if (fotos.length > 1) {
+      const newFotos = fotos.filter((_, i) => i !== index);
+      setFotos(newFotos);
+    }
+  };
+
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     try {
       const formData = new FormData();
@@ -142,7 +153,7 @@ export default function ReportPage() {
               <label htmlFor={`foto${index + 1}`} className="block text-sm font-semibold leading-6 text-gray-900">
                 Foto {index + 1}
               </label>
-              <div className="mt-2.5">
+              <div className="mt-2.5 flex items-center">
                 <input
                   type="file"
                   name={`foto${index + 1}`}
@@ -150,6 +161,15 @@ export default function ReportPage() {
                   onChange={(event) => handleFotoChange(event, index)}
                   className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFoto(index)}
+                    className="ml-2 px-2 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  >
+                    Remover
+                  </button>
+                )}
               </div>
             </div>
           ))}
