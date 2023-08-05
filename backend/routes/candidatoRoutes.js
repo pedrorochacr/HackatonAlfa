@@ -196,7 +196,7 @@ router.put('/aprovaCandidato',async (req, res) => {
   const candidatoId = req.query.id;
   const query =
     "UPDATE CANDIDATO SET admitido = 1 where id = $1";
-};
+});
 
 router.get('/listarFuncoes', async (req, res) => {
   const connection = createConnection();
