@@ -6,7 +6,7 @@ export const otherData: FormInput[] = [
     element: 'select',
     label: 'Função',
     placeholder: 'Escolher...',
-    options: ['Auxiliar de Serviços Gerais', 'Auxiliar de Serviços Gerais', 'Outro'],
+    options: ['Auxiliar de Serviços Gerais', 'Auxiliar de Serviços', 'Outro'],
   },
   {
     name: 'alojado',

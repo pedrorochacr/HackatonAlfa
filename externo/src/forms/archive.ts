@@ -41,6 +41,7 @@ export const archiveData: FormInput[] = [
     element: 'input',
     inputType: 'radio',
     label: 'Parente ou amigo que trabalha na Alfa',
+    placeholder: '',
     options: ['Sim', 'Não'],
   },
 ];

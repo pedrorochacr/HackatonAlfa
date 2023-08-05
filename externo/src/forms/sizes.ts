@@ -6,14 +6,14 @@ export const sizes: FormInput[] = [
     element: 'input',
     inputType: 'number',
     label: 'Numero de botina',
-    placeholder: 'Ex: 42',
+    placeholder: '22',
   },
   {
     name: 'numeroCalca',
     element: 'input',
     inputType: 'number',
     label: 'Numero de calça',
-    placeholder: 'Ex: 38',
+    placeholder: '38',
   },
   {
     name: 'tamanhoCamisa',

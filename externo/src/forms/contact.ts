@@ -18,7 +18,7 @@ export const contact: FormInput[] = [
   {
     name: 'email',
     element: 'input',
-    inputType: 'email',
+    inputType: 'text',
     label: 'E-mail',
     placeholder: 'Ex: teste@gmail.com',
   },
