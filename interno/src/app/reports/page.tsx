@@ -2,16 +2,17 @@
 import React, { SetStateAction, useState } from 'react';
 import axios from "axios";
 import { useRouter } from 'next/navigation';
-import TabelaCandidatos from '@/src/components/Tabelas/CandidatoTable';
+
+import TabelaReports from '@/src/components/Tabelas/ReportsTable';
 
 
-export default function CandidatosPage() {
+export default function ReportsPage() {
 
   return (
     <>
      <div className='bg-[#003A65] h-screen flex justify-center flex-col items-center'>
-        <h2 className='text-4xl mb-5'>Candidatos Cadastrados</h2>
-        <TabelaCandidatos></TabelaCandidatos>
+        <h2 className='text-4xl mb-5'>Reports Enviados</h2>
+        <TabelaReports></TabelaReports>
      </div>
        
     </>

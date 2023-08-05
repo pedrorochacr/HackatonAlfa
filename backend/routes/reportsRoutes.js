@@ -63,5 +63,24 @@ router.post(
     );
   }
 );
-
+router.get('/',async (req, res) => {
+  // Rota que cadastra um report no banco de dados
+  const connection = createConnection();
+  connection.query(
+    'select * from reports',
+    (err, result) => {
+      if (err) {
+        console.error('Erro ao pesquisar reports:', err);
+        res
+          .status(500)
+          .json({ error: 'Erro ao pesquisar reports' });
+      } else {
+        const resultado = result;
+        
+        res.send(resultado);
+      }
+    }
+  );
+}
+);
 module.exports = router;
