@@ -185,17 +185,27 @@ router.get('/',async (req, res) => {
             .json({ error: 'Erro ao pesquisar candidatos' });
         } else {
           const resultado = result;
-          console.log(result)
+          
           res.send(resultado);
         }
       }
     );
   }
 );
-router.put('/aprovaCandidato',async (req, res) => {
+router.put('/aprovaCandidato', (req, res) => {
   const candidatoId = req.query.id;
   const query =
-    "UPDATE CANDIDATO SET admitido = 1 where id = $1";
+    "UPDATE CANDIDATO SET admitido = 1 where id = ?";
+    const connection = createConnection();
+    connection.query(query, candidatoId, (err, result) => {
+      if (err) {
+        console.error('Erro ao atualizar candidato:', err.message);
+        return;
+      }
+      console.log('Candidato atualizado com sucesso.');
+       res.status(200).json({message :"Sucesso!"})
+      
+    });
 });
 
 router.get('/listarFuncoes', async (req, res) => {

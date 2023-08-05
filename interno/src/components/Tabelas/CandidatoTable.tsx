@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import "./style.css"
+import axios from 'axios';
 
 
 
-interface Candidato {
+interface Candidato{
     id: number;
     nomeCompletoMae: string;
     nomeCompletoPai: string;
@@ -50,23 +51,43 @@ export default function TabelaCandidatos() {
     const [showPopup, setShowPopup] = useState(false);
         const [selectedCandidate, setSelectedCandidate] = useState<Candidato>();
         const regex = /"/g;
+    const [atualizou, setAtualizou] = useState(false)
     // Função para fazer o request dos candidatos na URL
     useEffect(() => {
+        setAtualizou(false)
         fetch('http://localhost:4000/candidato/')
             .then((response) => response.json())
             .then((data) => setCandidatos(data))
 
             .catch((error) => console.error('Erro ao recuperar os candidatos:', error));
-    }, []);
-    const togglePopup = (candidato: Candidato) => {
+    }, [atualizou]);
+    const togglePopup = (candidato: Candidato | null) => {
         setShowPopup(!showPopup);
+        if(candidato){
+            setSelectedCandidate(candidato);
+        }
         
-        setSelectedCandidate(candidato);
     };
-    function aprovarCandidato(candidato: Candidato){
-        
+     function aprovarCandidato(candidato: Candidato){
+        axios
+        .put(`http://localhost:4000/candidato/aprovaCandidato?id=${candidato.id}`)
+        .then(response => {
+            console.log(response)
+            if (response.status === 200) {
+            
+              setAtualizou(true);
+
+           
+            } else {
+            console.error('Erro interno do servidor');
+            
+            }
+        })
+        .catch((error) => {
+            console.error('Erro interno do servidor');
+            
+        });
     }
-  
     // Função para renderizar os candidatos em uma tabela
     const renderCandidatesTable = () => {
         return (
@@ -77,6 +98,7 @@ export default function TabelaCandidatos() {
                             <th>Candidato</th>
                             <th>Sexo </th>
                             <th>Email</th>
+                            <th>Admitido</th>
                             <th>Ações</th> 
                         </tr>
                     </thead>
@@ -104,7 +126,25 @@ export default function TabelaCandidatos() {
                                     </div>
                                 </td>
                                 <td>
-                                    <button className="btn btn-ghost btn-xs">Aprovar</button>
+                                    <div className="flex items-center space-x-3">
+                                        <div>
+                                            <div  className={`font-bold ${candidato.admitido ? 'text-green-500' : 'text-red-500'}`}>{candidato.admitido ? 'SIM' : 'NÃO'}</div>
+
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {candidato.admitido ? 
+                                    
+                                    (<p className='font-bold text-yellow-500'>Admitido!</p>) : (
+                                        <button onClick={(event) => {
+                                            event.stopPropagation()
+                                            aprovarCandidato(candidato)
+                                            }} 
+                                            className="btn btn-ghost btn-xs">
+                                                Aprovar
+                                        </button>
+                                    )}
                                 </td>
 
                             </tr>
