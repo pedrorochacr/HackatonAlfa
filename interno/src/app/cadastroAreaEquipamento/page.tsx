@@ -1,9 +1,10 @@
 'use client';
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-export default function cadastroAreaEquipamentoPage() {
+export default function CadastroAreaEquipamentoPage() {
   const [codigo, setCodigo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('NÃO');
