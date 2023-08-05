@@ -2,15 +2,15 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
 export default function ReportPage() {
   const [nome, setNome] = useState('');
   const [centroDeCustos, setCentroDeCustos] = useState('');
   const [refAreaAtuacao, setRefAreaAtuacao] = useState('');
   const [descricao, setDescricao] = useState('');
-  const [fotos, setFotos] = useState<{ file: File | null; filled: boolean; }[]>([{ file: null, filled: false }]);
-  const router = useRouter();
+  const [fotos, setFotos] = useState<{ file: File | null; filled: boolean; }[]>([
+    { file: null, filled: false },
+  ]);
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
@@ -67,11 +67,51 @@ export default function ReportPage() {
       await axios.post('/api/submit-report', formData);
 
       // Após o envio bem-sucedido, redirecionar para a página inicial
-      router.push('/');
+      window.location.href = '/'; // Redirecionar manualmente para evitar erro de router não montado
     } catch (error) {
       // Lógica para tratamento de erro
       console.error('Erro ao enviar relato:', error);
     }
+  };
+
+  const handleTakePhoto = async (index: number) => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+  
+      const video = document.createElement('video');
+      video.srcObject = mediaStream;
+      video.onloadedmetadata = () => {
+        video.play();
+  
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+        const photoDataUrl = canvas.toDataURL('image/png');
+        const file = dataURLtoFile(photoDataUrl, `foto${index + 1}.png`);
+        const newFotos = [...fotos];
+        newFotos[index] = { file, filled: true };
+        setFotos(newFotos);
+  
+        video.srcObject?.getTracks().forEach((track) => track.stop());
+      };
+    } catch (error) {
+      console.error('Erro ao acessar a câmera:', error);
+    }
+  };
+  
+  const dataURLtoFile = (dataURL: string, filename: string): File | null => {
+    const arr = dataURL.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
   };
 
   return (
@@ -82,9 +122,9 @@ export default function ReportPage() {
           Reporte seu relato sobre segurança do trabalho na Alfa Engenharia.
           (Ocorrências, críticas e ideias).
         </p>
-      </div>
-      <form className="mx-auto mt-16 max-w-xl sm:mt-10" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+        </div>
+        <form className="mx-auto mt-16 max-w-xl sm:mt-10" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           <div>
             <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">
               Nome
@@ -154,13 +194,18 @@ export default function ReportPage() {
                 Foto {index + 1}
               </label>
               <div className="mt-2.5 flex items-center">
-                <input
-                  type="file"
-                  name={`foto${index + 1}`}
-                  id={`foto${index + 1}`}
-                  onChange={(event) => handleFotoChange(event, index)}
-                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
+                {foto.filled ? (
+                  <img src={URL.createObjectURL(foto.file)} alt={`Foto ${index + 1}`} className="w-32 h-32 object-cover rounded-md" />
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    name={`foto${index + 1}`}
+                    id={`foto${index + 1}`}
+                    onChange={(event) => handleFotoChange(event, index)}
+                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                )}
                 {index > 0 && (
                   <button
                     type="button"
@@ -170,18 +215,29 @@ export default function ReportPage() {
                     Remover
                   </button>
                 )}
+                {!foto.filled && (
+                  <button
+                    type="button"
+                    onClick={() => handleTakePhoto(index)}
+                    className="ml-2 px-2 py-1 rounded-md bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  >
+                    Tirar Foto
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
         <div className="mt-4">
-          <button
-            type="button"
-            onClick={handleAddFoto}
-            className="inline-flex items-center justify-center w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Adicionar Foto
-          </button>
+          {fotos.length < 3 && (
+            <button
+              type="button"
+              onClick={handleAddFoto}
+              className="inline-flex items-center justify-center w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Adicionar Foto
+            </button>
+          )}
         </div>
         <div className="mt-6">
           <button
