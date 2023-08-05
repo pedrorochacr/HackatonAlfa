@@ -33,7 +33,7 @@ router.post('/cadastrarReport', (req, res) => {
     }
   );
 
-  res.json(usuarios);
+
 });
 
 module.exports = router;

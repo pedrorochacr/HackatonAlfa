@@ -2,9 +2,27 @@
 
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.split('.').pop());
+  }
+});
+
+const upload = multer({ storage: storage })
 const { createConnection } = require('../config/config'); 
-router.post('/cadastrarCandidato', (req, res) => { // rota definida com post para passar os dados no corpo
+router.post('/cadastrarCandidato', upload.fields([
+    { name: 'arquivoIdentidade', maxCount: 1 },
+    { name: 'arquivoCpf', maxCount: 1 },
+    { name: 'arquivoCurriculo', maxCount: 1 },
+    { name: 'arquivoCnh', maxCount: 1 },
+    { name: 'arquivoReservista', maxCount: 1 },
+  ]), async (req, res) => { // rota definida com post para passar os dados no corpo
     // Rota que cadastra um candidato no banco de dados
    const {
         nomeCompletoMae ,
@@ -45,15 +63,17 @@ router.post('/cadastrarCandidato', (req, res) => { // rota definida com post par
         funcao ,
         alojado ,
         pcd,
-        arquivoIdentidade ,
-        arquivoCpf ,
-        arquivoCurriculo ,
-        arquivoCnh,
-        arquivoReservista ,
         parenteOuAmigo ,
     
    }   = req.body
-   
+   const arquivoIdentidade = req.files['arquivoIdentidade'][0].filename;
+  const arquivoCpf = req.files['arquivoCpf'][0].filename;
+  const arquivoCurriculo = req.files['arquivoCurriculo'][0].filename;
+  const arquivoCnh = req.files['arquivoCnh'] ? req.files['arquivoCnh'][0].filename : null;
+  const arquivoReservista = req.files['arquivoReservista'] ? req.files['arquivoReservista'][0].filename : null;
+
+
+  
    const connection = createConnection();
    connection.query(
     'INSERT INTO Candidato (nomeCompletoMae, nomeCompletoPai, nomeCompleto, sexo, estadoCivil, grauInstrucao, raca, dataNascimento, nacionalidade, paisNascimento, estadoNascimento, cidadeNascimento, numeroBotina, numeroCalca, tamanhoCamisa, telefone1, telefone2, email, cep, pais, estado, cidade, bairro, tipoLogradouro, enderecoResidencial, numero, complementoEndereco, rg, emissorRg, estadoOrgaoEmissor, cidadeEmissorRg, dataEmissao, numeroCpf, numeroPis, funcao, alojado, pcd, arquivoIdentidade, arquivoCpf, arquivoCurriculo, arquivoCnh, arquivoReservista, parenteOuAmigo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
