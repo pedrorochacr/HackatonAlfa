@@ -1,4 +1,4 @@
-import { FormValues } from '@/app/inscricao/page';
+import { CandidateForm } from "../../schemas/candidate";
 
 export type FormElement = 'input' | 'select';
 export type InputType =
@@ -12,7 +12,7 @@ export type InputType =
   | 'checkbox'
   | 'inputarea';
 export type FormInput = {
-  name: keyof FormValues;
+  name: keyof CandidateForm;
   element: FormElement;
   inputType?: InputType;
   label: string;

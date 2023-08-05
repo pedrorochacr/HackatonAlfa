@@ -1,0 +1,61 @@
+import { z } from 'zod';
+
+export const candidateSchema = z.object({
+  nomeCompleto: z.string(),
+  nomeCompletoMae: z.string(),
+  nomeCompletoPai: z.string(),
+  sexo: z.string(),
+  estadoCivil: z.string(),
+  grauInstrucao: z.string(),
+  raca: z.string(),
+  dataNascimento: z.string(),
+  nacionalidade: z.string(),
+  paisNascimento: z.string(),
+  estadoNascimento: z.string().optional(),
+  cidadeNascimento: z.string().optional(),
+  numeroBotina: z.number().min(0).max(50),
+  numeroCalca: z.number().min(0).max(80),
+  tamanhoCamisa: z.string(),
+  telefone1: z.string().min(3).max(20),
+  telefone2: z.string().optional(),
+  email: z.string().email(),
+  cep: z.string().min(3).max(8),
+  pais: z.string().optional(),
+  estado: z.string(),
+  cidade: z.string(),
+  bairro: z.string(),
+  tipoLogradouro: z.string(),
+  enderecoResidencial: z.string(),
+  numero: z.number(),
+  complementoEndereco: z.string(),
+  rg: z.string().min(3).max(255),
+  emissorRg: z.string().optional(),
+  estadoOrgaoEmissor: z.string(),
+  cidadeEmissorRg: z.string(),
+  dataEmissao: z.string().optional(),
+  numeroCpf: z.string().min(11).max(11),
+  numeroPis: z.string().min(3).max(15),
+  funcao: z.string(),
+  alojado: z.string(),
+  pcd: z.string(),
+  arquivoIdentidade: z.custom<File>(),
+  arquivoCpf: z.custom<File>(),
+  arquivoCurriculo: z.custom<File>(),
+  arquivoCnh: z.custom<File>().optional(),
+  arquivoReservista: z.custom<File>().optional(),
+  parenteOuAmigo: z.string(),
+  dependentes: z.array(
+    z.object({
+      nomeCompleto: z.string().min(3).max(255),
+      cpf: z.string().min(11).max(11),
+      sexo: z.string(),
+      dataNascimento: z.string(),
+      grauParentesco: z.string(),
+    })
+  ),
+  termos: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Aceite os termos' }),
+});
+
+export type CandidateForm = z.infer<typeof candidateSchema>;

@@ -30,15 +30,11 @@ router.post(
     { name: 'arquivoReservista', maxCount: 1 },
   ]),
   async (req, res) => {
-    console.log(req.files);
-    // rota definida com post para passar os dados no corpo
-    // Rota que cadastra um candidato no banco de dados
     const {
       nomeCompletoMae,
       nomeCompletoPai,
       nomeCompleto,
       sexo,
-      dependentes,
       estadoCivil,
       grauInstrucao,
       raca,
@@ -74,20 +70,23 @@ router.post(
       pcd,
       parenteOuAmigo,
     } = req.body;
-    console.log(req.files);
-    const arquivoIdentidade = req.files['arquivoIdentidade'].filename;
+    let dependentes;
+    if (req.body.dependentes) {
+      dependentes = JSON.parse(req.body.dependentes);
+    }
+    const arquivoIdentidade = req.files['arquivoIdentidade'][0].filename;
     const arquivoCpf = req.files['arquivoCpf'][0].filename;
     const arquivoCurriculo = req.files['arquivoCurriculo'][0].filename;
     const arquivoCnh = req.files['arquivoCnh']
       ? req.files['arquivoCnh'][0].filename
-      : null;
+      : '';
     const arquivoReservista = req.files['arquivoReservista']
       ? req.files['arquivoReservista'][0].filename
-      : null;
+      : '';
 
     const connection = createConnection();
     connection.query(
-      'INSERT INTO Candidato (nomeCompletoMae, nomeCompletoPai, nomeCompleto, sexo, estadoCivil, grauInstrucao, raca, dataNascimento, nacionalidade, paisNascimento, estadoNascimento, cidadeNascimento, numeroBotina, numeroCalca, tamanhoCamisa, telefone1, telefone2, email, cep, pais, estado, cidade, bairro, tipoLogradouro, enderecoResidencial, numero, complementoEndereco, rg, emissorRg, estadoOrgaoEmissor, cidadeEmissorRg, dataEmissao, numeroCpf, numeroPis, funcao, alojado, pcd, arquivoIdentidade, arquivoCpf, arquivoCurriculo, arquivoCnh, arquivoReservista, parenteOuAmigo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO CANDIDATO (nomeCompletoMae, nomeCompletoPai, nomeCompleto, sexo, estadoCivil, grauInstrucao, raca, dataNascimento, nacionalidade, paisNascimento, estadoNascimento, cidadeNascimento, numeroBotina, numeroCalca, tamanhoCamisa, telefone1, telefone2, email, cep, pais, estado, cidade, bairro, tipoLogradouro, enderecoResidencial, numero, complementoEndereco, rg, emissorRg, estadoOrgaoEmissor, cidadeEmissorRg, dataEmissao, numeroCpf, numeroPis, funcao, alojado, pcd, arquivoIdentidade, arquivoCpf, arquivoCurriculo, arquivoCnh, arquivoReservista, parenteOuAmigo, admitido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         nomeCompletoMae,
         nomeCompletoPai,
@@ -132,6 +131,7 @@ router.post(
         arquivoCnh,
         arquivoReservista,
         parenteOuAmigo,
+        false,
       ],
       (err, result) => {
         if (err) {
@@ -141,7 +141,7 @@ router.post(
             .json({ error: 'Erro ao inserir os dados no banco de dados.' });
         } else {
           console.log('Candidato cadastrado com sucesso!');
-          if (dependentes) {
+          if (dependentes && dependentes.length > 0) {
             // se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {
               if (err) {
@@ -167,23 +167,46 @@ router.post(
   }
 );
 
+router.get('/listarFuncoes', async (req, res) => {
+  const connection = createConnection();
+  connection.query(
+    'SELECT * FROM funcao ORDER BY descricao ASC',
+    (err, result) => {
+      if (err) {
+        console.error('Erro ao inserir os dados:', err);
+        res
+          .status(500)
+          .json({ error: 'Erro ao inserir os dados no banco de dados.' });
+      } else {
+        res.status(200).json(result);
+      }
+    }
+  );
+});
+
 // Função para inserir os dependentes na tabela "dependentes" usando callbacks
-async function insertDependentes(idCandidato, dependentes) {
+function insertDependentes(idCandidato, dependentes) {
   // Monta os valores para o INSERT na tabela "dependentes"
   const values = dependentes.map((dependente) => [
     idCandidato,
-    dependente.nome,
-    dependente.parentesco,
+    dependente.nomeCompleto,
+    dependente.cpf,
+    dependente.sexo,
+    dependente.dataNascimento,
+    dependente.grauParentesco,
   ]);
+  const connection = createConnection();
 
-  // Executa o INSERT
-  const sql =
-    'INSERT INTO dependentes (idCandidato, nome, parentesco) VALUES ?';
-  connection.query(sql, [values], (err, result) => {
-    if (err) {
-      console.error('Falha ao cadastrar candidatos :', err);
-    }
-  });
+  for (const dependente of values) {
+    // Executa o INSERT
+    const sql =
+      'INSERT INTO dependente (idCandidato, nome, cpf, sexo, dataNascimento, grauParentesco) VALUES (?, ?, ?, ?, ?, ?)';
+    connection.query(sql, dependente, (err, result) => {
+      if (err) {
+        console.error('Falha ao cadastrar candidatos :', err);
+      }
+    });
+  }
 }
 
 module.exports = router;

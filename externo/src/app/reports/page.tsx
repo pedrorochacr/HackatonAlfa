@@ -1,6 +1,6 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import axios from 'axios';
 
 export default function ReportPage() {
   const [nome, setNome] = useState('');
@@ -11,11 +11,10 @@ export default function ReportPage() {
     { file: null, filled: false },
   ]);
   const [localizacao, setLocalizacao] = useState<String>('');
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
   const [anonimo, setAnonimo] = useState(false);
   const [descricaoError, setDescricaoError] = useState('');
   const [foto1Error, setFoto1Error] = useState('');
+  const router = useRouter();
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
@@ -116,11 +115,6 @@ export default function ReportPage() {
 
     handleGetLocation();
 
-    // if (latitude === null || longitude === null) {
-    //   alert('É necessário permitir a localização para enviar o relato.');
-    //   return;
-    // }
-
     // Validar os campos obrigatórios
     if (!descricao) {
       setDescricaoError('A descrição do relato é obrigatória.');
@@ -139,21 +133,25 @@ export default function ReportPage() {
       formData.append('descricao', descricao);
       formData.append('localizacao', String(localizacao));
       fotos.forEach((foto, index) => {
-        console.log(foto)
+        console.log(foto);
         if (foto.file) {
           formData.append(`foto${index + 1}`, foto.file);
         }
       });
 
       console.log(nome, centroDeCustos, refAreaAtuacao, descricao, localizacao);
-    
-      await fetch('http://localhost:4000/report/cadastrarReport', {
+
+      const res = await fetch('http://localhost:4000/report/cadastrarReport', {
         method: 'POST',
         body: formData,
-      })
+      });
 
-      // Após o envio bem-sucedido, redirecionar para a página inicial
-      // window.location.href = '/'; // Redirecionar manualmente para evitar erro de router não montado
+      if (res.ok) {
+        alert('Relato enviado com sucesso!');
+        router.push('/');
+      } else {
+        alert('Erro ao enviar relato.');
+      }
     } catch (error) {
       // Lógica para tratamento de erro
       console.error('Erro ao enviar relato:', error);
@@ -173,12 +171,12 @@ export default function ReportPage() {
   };
 
   return (
-    <div className="isolate bg-white px-6 py-10 lg:px-8">
+    <div className="px-6 py-10 lg:px-8">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Entre em contato
         </h2>
-        <p className="mt-2 text-lg leading-8 text-gray-600">
+        <p className="mt-2 text-lg leading-8 ">
           Reporte seu relato sobre segurança do trabalho na Alfa Engenharia.
           (Ocorrências, críticas e ideias).
         </p>
@@ -190,7 +188,7 @@ export default function ReportPage() {
               <div>
                 <label
                   htmlFor="first-name"
-                  className="block text-sm font-semibold leading-6 text-gray-900"
+                  className="block text-sm font-semibold leading-6 "
                 >
                   Nome
                 </label>
@@ -202,14 +200,14 @@ export default function ReportPage() {
                     value={nome}
                     onChange={handleNomeChange}
                     autoComplete="given-name"
-                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
+                    className="input input-bordered w-full"
                   />
                 </div>
               </div>
               <div>
                 <label
                   htmlFor="centro-de-custos"
-                  className="block text-sm font-semibold leading-6 text-gray-900"
+                  className="block text-sm font-semibold leading-6 "
                 >
                   Centro de Custos
                 </label>
@@ -220,14 +218,14 @@ export default function ReportPage() {
                     id="centro-de-custos"
                     value={centroDeCustos}
                     onChange={handleCentroDeCustosChange}
-                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
+                    className="input input-bordered w-full"
                   />
                 </div>
               </div>
               <div className="sm:col-span-2">
                 <label
                   htmlFor="ref-area-atuacao"
-                  className="block text-sm font-semibold leading-6 text-gray-900"
+                  className="block text-sm font-semibold leading-6 "
                 >
                   Referência da Área de Atuação
                 </label>
@@ -238,14 +236,14 @@ export default function ReportPage() {
                     id="ref-area-atuacao"
                     value={refAreaAtuacao}
                     onChange={handleRefAreaAtuacaoChange}
-                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
+                    className="input input-bordered w-full"
                   />
                 </div>
               </div>
             </>
           )}
           <div className="sm:col-span-2">
-            <label className="block text-sm font-semibold leading-6 text-gray-900">
+            <label className="block text-sm font-semibold leading-6 ">
               Relato Anônimo:
             </label>
             <div className="mt-2.5">
@@ -257,7 +255,7 @@ export default function ReportPage() {
                   onChange={() => setAnonimo(true)}
                   className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-gray-900">Sim</span>
+                <span className="ml-2 ">Sim</span>
               </label>
               <label className="inline-flex items-center ml-6">
                 <input
@@ -267,14 +265,14 @@ export default function ReportPage() {
                   onChange={() => setAnonimo(false)}
                   className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-gray-900">Não</span>
+                <span className="ml-2 ">Não</span>
               </label>
             </div>
           </div>
           <div className="sm:col-span-2">
             <label
               htmlFor="descricao"
-              className="block text-sm font-semibold leading-6 text-gray-900"
+              className="block text-sm font-semibold leading-6 "
             >
               Descrição do Relato
             </label>
@@ -285,7 +283,7 @@ export default function ReportPage() {
                 value={descricao}
                 onChange={handleDescricaoChange}
                 rows={4}
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white"
+                className="textarea textarea-bordered w-full"
               />
               {descricaoError && (
                 <p className="mt-1 text-red-600">{descricaoError}</p>
@@ -296,7 +294,7 @@ export default function ReportPage() {
             <div key={index} className="sm:col-span-2">
               <label
                 htmlFor={`foto${index + 1}`}
-                className="block text-sm font-semibold leading-6 text-gray-900"
+                className="block text-sm font-semibold leading-6 "
               >
                 Foto {index + 1}
               </label>
@@ -314,7 +312,7 @@ export default function ReportPage() {
                     name={`foto${index + 1}`}
                     id={`foto${index + 1}`}
                     onChange={(event) => handleFotoChange(event, index)}
-                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className='file-input w-full'
                   />
                 )}
                 {index === 0 && foto1Error && (
