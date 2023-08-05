@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -14,6 +13,9 @@ export default function ReportPage() {
   const [localizacao, setLocalizacao] = useState<String | null>(null);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+  const [anonimo, setAnonimo] = useState(false);
+  const [descricaoError, setDescricaoError] = useState('');
+  const [foto1Error, setFoto1Error] = useState('');
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
@@ -102,6 +104,17 @@ export default function ReportPage() {
       alert('É necessário permitir a localização para enviar o relato.');
       return;
     }
+
+    // Validar os campos obrigatórios
+    if (!descricao) {
+      setDescricaoError('A descrição do relato é obrigatória.');
+      return;
+    }
+    if (!fotos[0].filled) {
+      setFoto1Error('A primeira foto é obrigatória.');
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append('nome', nome);
@@ -149,52 +162,83 @@ export default function ReportPage() {
       </div>
       <form className="mx-auto mt-16 max-w-xl sm:mt-10" onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-          <div>
-            <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">
-              Nome
-            </label>
-            <div className="mt-2.5">
-              <input
-                type="text"
-                name="first-name"
-                id="first-name"
-                value={nome}
-                onChange={handleNomeChange}
-                autoComplete="given-name"
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="centro-de-custos" className="block text-sm font-semibold leading-6 text-gray-900">
-              Centro de Custos
-            </label>
-            <div className="mt-2.5">
-              <input
-                type="text"
-                name="centro-de-custos"
-                id="centro-de-custos"
-                value={centroDeCustos}
-                onChange={handleCentroDeCustosChange}
-                autoComplete="family-name"
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
+          {!anonimo && (
+            <>
+              <div>
+                <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">
+                  Nome
+                </label>
+                <div className="mt-2.5">
+                  <input
+                    type="text"
+                    name="first-name"
+                    id="first-name"
+                    value={nome}
+                    onChange={handleNomeChange}
+                    autoComplete="given-name"
+                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="centro-de-custos" className="block text-sm font-semibold leading-6 text-gray-900">
+                  Centro de Custos
+                </label>
+                <div className="mt-2.5">
+                  <input
+                    type="text"
+                    name="centro-de-custos"
+                    id="centro-de-custos"
+                    value={centroDeCustos}
+                    onChange={handleCentroDeCustosChange}
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="ref-area-atuacao" className="block text-sm font-semibold leading-6 text-gray-900">
+                  Referência da Área de Atuação
+                </label>
+                <div className="mt-2.5">
+                  <input
+                    type="text"
+                    name="ref-area-atuacao"
+                    id="ref-area-atuacao"
+                    value={refAreaAtuacao}
+                    onChange={handleRefAreaAtuacaoChange}
+                    autoComplete="email"
+                    className="block w-300 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+            </>
+          )}
           <div className="sm:col-span-2">
-            <label htmlFor="ref-area-atuacao" className="block text-sm font-semibold leading-6 text-gray-900">
-              Referência da Área de Atuação
+            <label className="block text-sm font-semibold leading-6 text-gray-900">
+              Relato Anônimo:
             </label>
             <div className="mt-2.5">
-              <input
-                type="text"
-                name="ref-area-atuacao"
-                id="ref-area-atuacao"
-                value={refAreaAtuacao}
-                onChange={handleRefAreaAtuacaoChange}
-                autoComplete="email"
-                className="block w-300 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="anonimo"
+                  checked={anonimo}
+                  onChange={() => setAnonimo(true)}
+                  className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span className="ml-2 text-gray-900">Sim</span>
+              </label>
+              <label className="inline-flex items-center ml-6">
+                <input
+                  type="radio"
+                  name="anonimo"
+                  checked={!anonimo}
+                  onChange={() => setAnonimo(false)}
+                  className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span className="ml-2 text-gray-900">Não</span>
+              </label>
             </div>
           </div>
           <div className="sm:col-span-2">
@@ -210,6 +254,7 @@ export default function ReportPage() {
                 rows={4}
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+              {descricaoError && <p className="mt-1 text-red-600">{descricaoError}</p>}
             </div>
           </div>
           {fotos.map((foto, index) => (
@@ -230,6 +275,7 @@ export default function ReportPage() {
                     className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 )}
+                {index === 0 && foto1Error && <p className="ml-2 text-red-600">{foto1Error}</p>}
                 {index > 0 && (
                   <button
                     type="button"
@@ -266,9 +312,7 @@ export default function ReportPage() {
         <div className="mt-6">
           <button
             type="button"
-            onClick={
-              handleGetLocation
-            }
+            onClick={handleGetLocation}
             className="block w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-4"
           >
             Contate-nos
