@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
+
 export default function ReportPage() {
   const [nome, setNome] = useState('');
   const [centroDeCustos, setCentroDeCustos] = useState('');
@@ -109,6 +110,8 @@ export default function ReportPage() {
       console.error('Geolocalização não suportada neste navegador.');
     }
   };
+  alert("Relato enviado com sucesso");
+  const router = useRouter();
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
