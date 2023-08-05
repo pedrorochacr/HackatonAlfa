@@ -2,7 +2,6 @@
 
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { personalData } from '@/forms/personal_data';
 import { birthData } from '@/forms/birth_data';
 import { sizes } from '@/forms/sizes';
@@ -12,92 +11,84 @@ import { address } from '@/forms/address';
 import { registryData } from '@/forms/registryData';
 import { otherData } from '@/forms/other';
 import { archiveData } from '@/forms/archive';
+import { useEffect, useState } from 'react';
+import { CandidateForm, candidateSchema } from '../../../schemas/candidate';
 
-const schema = z.object({
-  // nomeCompleto: z.string().min(3).max(255),
-  // nomeCompletoMae: z.string().min(3).max(255),
-  // nomeCompletoPai: z.string().min(3).max(255),
-  // sexo: z.enum(['Masculino', 'Feminino', 'Outro']),
-  // estadoCivil: z.enum(['Casado', 'Solteiro']),
-  // grauInstrucao: z.enum(['Ensino Médio', 'Ensino Superior', 'Outro']),
-  // raca: z.enum(['Branco', 'Preto', 'Outro']),
-  // dataNascimento: z.string(),
-  // nacionalidade: z.string().min(3).max(255),
-  // paisNascimento: z.string().min(3).max(255),
-  // estadoNascimento: z.string().min(3).max(255),
-  // cidadeNascimento: z.string().min(3).max(255),
-  // numeroBotina: z.number().min(0).max(60),
-  // numeroCalca: z.number().min(0).max(60),
-  // tamanhoCamisa: z.enum(['P', 'M', 'G', 'GG', 'XG']),
-  // telefone1: z.string().min(3).max(255),
-  // telefone2: z.string().min(3).max(255),
-  // email: z.string().email(),
-  // cep: z.string().min(3).max(255),
-  // pais: z.string().min(3).max(255),
-  // estado: z.string().min(3).max(255),
-  // cidade: z.string().min(3).max(255),
-  // bairro: z.string().min(3).max(255),
-  // tipoLogradouro: z.string().min(3).max(255),
-  // enderecoResidencial: z.string().min(3).max(255),
-  // numero: z.number().min(3).max(255),
-  // complementoEndereco: z.string().min(3).max(255),
-  // rg: z.string().min(3).max(255),
-  // emissorRg: z.string().min(3).max(255),
-  // estadoOrgaoEmissor: z.string().min(3).max(255),
-  // cidadeEmissorRg: z.string().min(3).max(255),
-  // dataEmissao: z.string(),
-  // numeroCpf: z.string().min(3).max(255),
-  // numeroPis: z.string().min(3).max(255),
-  // funcao: z.string().min(3).max(255),
-  // alojado: z.enum(['Sim', 'Não']),
-  // pcd: z.enum(['Sim', 'Não']),
-  arquivoIdentidade: z.custom<File>(),
-  arquivoCpf: z.custom<File>(),
-  arquivoCurriculo: z.custom<File>(),
-  arquivoCnh: z.custom<File>(),
-  arquivoReservista: z.custom<File>(),
-  // parenteOuAmigo: z.enum(['Sim', 'Não']),
-  // dependentes: z.array(
-  //   z.object({
-  //     nomeCompleto: z.string().min(3).max(255),
-  //     cpf: z.string().min(3).max(255),
-  //     sexo: z.enum(['Masculino', 'Feminino', 'Outro']),
-  //     dataNascimento: z.string(),
-  //     grauParentesco: z.enum(['Filho', 'Esposa', 'Outro']),
-  //   })
-  // ),
-  // termos: z
-  //   .boolean()
-  //   .refine((v) => v === true, { message: 'Aceite os termos' }),
-});
-
-export type FormValues = z.infer<typeof schema>;
+type Function = {
+  id: number;
+  descricao: string;
+  codigo: string;
+  cbo: string;
+};
 
 export default function SubscriptionPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
     control,
-    watch,
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  } = useForm<CandidateForm>({
+    resolver: zodResolver(candidateSchema),
   });
-  const values = watch();
+  const [functions, setFunctions] = useState<Function[]>([]);
+  const watchParenteOuAmigo = watch('parenteOuAmigo');
 
-  async function onSubmit(data: FormValues) {
-    console.log(data);
+  useEffect(() => {
+    fetch('http://localhost:4000/candidato/listarFuncoes')
+      .then(async (res) => {
+        const json = await res.json();
+        setFunctions(json);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
+  async function onSubmit(data: CandidateForm) {
+    const files = [
+      'arquivoIdentidade',
+      'arquivoCpf',
+      'arquivoCurriculo',
+      'arquivoCnh',
+      'arquivoReservista',
+    ];
     const formData = new FormData();
+    for (const key in data) {
+      if (!files.includes(key)) {
+        //@ts-ignore
+        const value = data[key];
+        if (value.length > 0) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value);
+        }
+      }
+    }
+    // @ts-ignore
     formData.append('arquivoIdentidade', data.arquivoIdentidade[0]);
+    // @ts-ignore
+    formData.append('arquivoCpf', data.arquivoCpf[0]);
+    // @ts-ignore
+    formData.append('arquivoCurriculo', data.arquivoCurriculo[0]);
+    // @ts-ignore
+    formData.append('arquivoCnh', data.arquivoCnh[0]);
+    // @ts-ignore
+    formData.append('arquivoReservista', data.arquivoReservista[0]);
 
-    await fetch('http://localhost:4000/candidato/cadastrarCandidato', {
-      method: 'POST',
-      body: formData,
-    }).then(async (res) => {
-      const json = await res.json();
-      console.log(json);
-    });
+    const res = await fetch(
+      'http://localhost:4000/candidato/cadastrarCandidato',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    if (res.ok) {
+      alert('Candidato cadastrado com sucesso');
+    } else {
+      alert('Erro ao cadastrar candidato');
+    }
   }
 
   const { fields, append, remove } = useFieldArray({
@@ -109,13 +100,13 @@ export default function SubscriptionPage() {
     append({
       nomeCompleto: '',
       cpf: '',
-      sexo: 'Masculino',
+      sexo: 'Escolher...',
       dataNascimento: '',
-      grauParentesco: 'Filho',
+      grauParentesco: 'Escolher...',
     });
   }
 
-  function renderSwitch(field: FormInput) {
+  function renderInput(field: FormInput) {
     const { element, name, placeholder, inputType, options } = field;
 
     function renderInputType() {
@@ -186,6 +177,14 @@ export default function SubscriptionPage() {
                 </option>
               );
             })}
+            {name === 'funcao' &&
+              functions.map((option) => {
+                return (
+                  <option key={option.id} value={option.descricao}>
+                    {option.descricao}
+                  </option>
+                );
+              })}
           </select>
         );
     }
@@ -193,7 +192,7 @@ export default function SubscriptionPage() {
 
   return (
     <main className="p-12 space-y-2">
-      <p className="prose">
+      <p className="prose text-white">
         ATENÇÃO: o preenchimento dessas informações é de suma importância para o
         seu prosseguimento no processo seletivo. Todos os campos são
         OBRIGATÓRIOS, então se atente às informações preenchidas.
@@ -205,11 +204,11 @@ export default function SubscriptionPage() {
           {personalData.map((field) => {
             const { name, label } = field;
             return (
-              <div key={name} className="">
+              <div key={name}>
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -229,7 +228,7 @@ export default function SubscriptionPage() {
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -249,7 +248,7 @@ export default function SubscriptionPage() {
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -269,7 +268,7 @@ export default function SubscriptionPage() {
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -289,7 +288,7 @@ export default function SubscriptionPage() {
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -309,7 +308,7 @@ export default function SubscriptionPage() {
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -329,7 +328,7 @@ export default function SubscriptionPage() {
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -349,7 +348,7 @@ export default function SubscriptionPage() {
                 <label className="label">
                   <span className="label-text">{label}</span>
                 </label>
-                {renderSwitch(field)}
+                {renderInput(field)}
                 {errors[name] && (
                   <span className="text-xs text-error">
                     {errors && errors[name]?.message}
@@ -358,68 +357,131 @@ export default function SubscriptionPage() {
               </div>
             );
           })}
-
-          <p>
-            <span className="mr-2">Dependentes</span>
-            <button className="btn btn-primary" onClick={addDependent}>
+          {watchParenteOuAmigo === 'Sim' && (
+            <div>
+              <label className="label">
+                <span className="label-text">Nome do conhecido</span>
+              </label>
+              <input
+                className="input input-bordered w-full"
+                type="text"
+                placeholder="Nome"
+                {...register('conhecidoNome')}
+              />
+              {errors['conhecidoNome'] && (
+                <span className="text-xs text-error">
+                  {errors && errors['conhecidoNome']?.message}
+                </span>
+              )}
+              <label className="label">
+                <span className="label-text">Cidade do conhecido</span>
+              </label>
+              <input
+                className="input input-bordered w-full"
+                type="text"
+                placeholder="Cidade"
+                {...register('conhecidoCidade')}
+              />
+              {errors['conhecidoCidade'] && (
+                <span className="text-xs text-error">
+                  {errors && errors['conhecidoCidade']?.message}
+                </span>
+              )}
+              <label className="label">
+                <span className="label-text">Função do conhecido</span>
+              </label>
+              <select
+                className="select select-bordered w-full"
+                {...register('conhecidoFuncao')}
+              >
+                <option selected>Escolha...</option>
+                {functions.map((option) => {
+                  return (
+                    <option key={option.id} value={option.descricao}>
+                      {option.descricao}
+                    </option>
+                  );
+                })}
+              </select>
+              {errors['conhecidoNome'] && (
+                <span className="text-xs text-error">
+                  {errors && errors['conhecidoNome']?.message}
+                </span>
+              )}
+            </div>
+          )}
+        </section>
+        <section className="flex flex-col">
+          <div className="flex flex-row">
+            <p className="mr-2">Dependentes</p>
+            <button className="btn btn-secondary" onClick={addDependent}>
               +
             </button>
-            {fields.map((field, index) => {
-              return (
-                <div key={field.id}>
-                  <label className="label">
-                    <span className="label-text">Dependente {index + 1}</span>
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      className="input input-bordered w-full"
-                      type="text"
-                      placeholder="Nome Completo"
-                      {...register(
-                        `dependentes.${index}.nomeCompleto` as const
-                      )}
-                    />
-                    <input
-                      className="input input-bordered w-full"
-                      type="text"
-                      placeholder="CPF"
-                      {...register(`dependentes.${index}.cpf` as const)}
-                    />
-                    <input
-                      className="input input-bordered w-full"
-                      type="text"
-                      placeholder="Sexo"
-                      {...register(`dependentes.${index}.sexo` as const)}
-                    />
-                    <input
-                      className="input input-bordered w-full"
-                      type="date"
-                      placeholder="Data de Nascimento"
-                      {...register(
-                        `dependentes.${index}.dataNascimento` as const
-                      )}
-                    />
-                    <input
-                      className="input input-bordered w-full"
-                      type="text"
-                      placeholder="Grau de Parentesco"
-                      {...register(
-                        `dependentes.${index}.grauParentesco` as const
-                      )}
-                    />
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => remove(index)}
-                    >
-                      Remover
-                    </button>
-                  </div>
+          </div>
+
+          {fields.map((field, index) => {
+            return (
+              <div key={field.id}>
+                <label className="label">
+                  <span className="label-text">Dependente {index + 1}</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    className="input input-bordered w-full"
+                    type="text"
+                    placeholder="Nome Completo"
+                    {...register(`dependentes.${index}.nomeCompleto` as const)}
+                  />
+                  <input
+                    className="input input-bordered w-full"
+                    type="text"
+                    placeholder="CPF"
+                    {...register(`dependentes.${index}.cpf` as const)}
+                  />
+                  <select
+                    className="select select-bordered w-full"
+                    {...register(`dependentes.${index}.sexo` as const)}
+                  >
+                    <option selected>Escolher...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                  </select>
+
+                  <input
+                    className="input input-bordered w-full"
+                    type="date"
+                    placeholder="Data de Nascimento"
+                    {...register(
+                      `dependentes.${index}.dataNascimento` as const
+                    )}
+                  />
+                  <select
+                    className="select select-bordered w-full"
+                    {...register(
+                      `dependentes.${index}.grauParentesco` as const
+                    )}
+                  >
+                    <option selected>Escolher...</option>
+                    <option value="Filho">Filho</option>
+                    <option value="Conjugue">Conjugue</option>
+                  </select>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => remove(index)}
+                  >
+                    Remover
+                  </button>
                 </div>
-              );
-            })}
-          </p>
+                {errors.dependentes && (
+                  <span className="text-xs text-error w-full">
+                    Um ou mais dependentes não foram preenchidos corretamente
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </section>
-        <section className="space-y-2">
+        <section className="flex flex-row gap-2 justfify-center flex-wrap">
           <input
             type="checkbox"
             className="checkbox checkbox-primary"
@@ -435,7 +497,7 @@ export default function SubscriptionPage() {
             publicada no site.
           </span>
           {errors.termos && (
-            <span className="text-xs text-error">
+            <span className="text-xs text-error w-full">
               {errors && errors.termos?.message}
             </span>
           )}
@@ -444,12 +506,6 @@ export default function SubscriptionPage() {
           Enviar
         </button>
       </form>
-      <section>
-        <h1>Values</h1>
-        <pre>
-          <code>{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      </section>
     </main>
   );
 }
