@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { ZodType, z } from 'zod';
 
 export const candidateSchema = z.object({
   nomeCompleto: z.string(),
@@ -38,11 +38,11 @@ export const candidateSchema = z.object({
   funcao: z.string(),
   alojado: z.string(),
   pcd: z.string(),
-  arquivoIdentidade: z.custom<File>(),
-  arquivoCpf: z.custom<File>(),
-  arquivoCurriculo: z.custom<File>(),
-  arquivoCnh: z.custom<File>().optional(),
-  arquivoReservista: z.custom<File>().optional(),
+  arquivoIdentidade: z.any() as ZodType<File>,
+  arquivoCpf: z.any() as ZodType<File>,
+  arquivoCurriculo: z.any() as ZodType<File>,
+  arquivoCnh: (z.any() as ZodType<File>).optional(),
+  arquivoReservista: (z.any() as ZodType<File>).optional(),
   parenteOuAmigo: z.string(),
   dependentes: z.array(
     z.object({
