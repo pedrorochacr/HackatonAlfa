@@ -11,6 +11,9 @@ export default function ReportPage() {
   const [fotos, setFotos] = useState<{ file: File | null; filled: boolean; }[]>([
     { file: null, filled: false },
   ]);
+  const [localizacao, setLocalizacao] = useState<String | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
@@ -50,14 +53,63 @@ export default function ReportPage() {
     }
   };
 
+  const handleTakePhoto = async (index: number) => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+      const video = document.createElement('video');
+      video.srcObject = mediaStream;
+      video.onloadedmetadata = () => {
+        video.play();
+
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const photoDataUrl = canvas.toDataURL('image/png');
+        const file = dataURLtoFile(photoDataUrl, `foto${index + 1}.png`);
+        const newFotos = [...fotos];
+        newFotos[index] = { file, filled: true };
+        setFotos(newFotos);
+
+        video.srcObject?.getTracks().forEach((track) => track.stop());
+      };
+    } catch (error) {
+      console.error('Erro ao acessar a câmera:', error);
+    }
+  };
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocalizacao(position.coords.latitude + ' ' + position.coords.longitude);
+        },
+        (error) => {
+          console.error('Erro ao obter a localização:', error);
+        }
+      );
+    } else {
+      console.error('Geolocalização não suportada neste navegador.');
+    }
+  };
+
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    if (latitude === null || longitude === null) {
+      alert('É necessário permitir a localização para enviar o relato.');
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append('nome', nome);
       formData.append('centroDeCustos', centroDeCustos);
       formData.append('refAreaAtuacao', refAreaAtuacao);
       formData.append('descricao', descricao);
+      formData.append('latitude', String(latitude));
+      formData.append('longitude', String(longitude));
       fotos.forEach((foto, index) => {
         if (foto.file) {
           formData.append(`foto${index + 1}`, foto.file);
@@ -74,34 +126,6 @@ export default function ReportPage() {
     }
   };
 
-  const handleTakePhoto = async (index: number) => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-  
-      const video = document.createElement('video');
-      video.srcObject = mediaStream;
-      video.onloadedmetadata = () => {
-        video.play();
-  
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const context = canvas.getContext('2d');
-        context?.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-        const photoDataUrl = canvas.toDataURL('image/png');
-        const file = dataURLtoFile(photoDataUrl, `foto${index + 1}.png`);
-        const newFotos = [...fotos];
-        newFotos[index] = { file, filled: true };
-        setFotos(newFotos);
-  
-        video.srcObject?.getTracks().forEach((track) => track.stop());
-      };
-    } catch (error) {
-      console.error('Erro ao acessar a câmera:', error);
-    }
-  };
-  
   const dataURLtoFile = (dataURL: string, filename: string): File | null => {
     const arr = dataURL.split(',');
     const mime = arr[0].match(/:(.*?);/)![1];
@@ -122,9 +146,9 @@ export default function ReportPage() {
           Reporte seu relato sobre segurança do trabalho na Alfa Engenharia.
           (Ocorrências, críticas e ideias).
         </p>
-        </div>
-        <form className="mx-auto mt-16 max-w-xl sm:mt-10" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+      </div>
+      <form className="mx-auto mt-16 max-w-xl sm:mt-10" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           <div>
             <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">
               Nome
@@ -241,8 +265,11 @@ export default function ReportPage() {
         </div>
         <div className="mt-6">
           <button
-            type="submit"
-            className="block w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            type="button"
+            onClick={
+              handleGetLocation
+            }
+            className="block w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-4"
           >
             Contate-nos
           </button>
