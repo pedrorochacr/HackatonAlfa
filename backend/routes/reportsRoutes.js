@@ -17,7 +17,7 @@ router.post('/cadastrarReport', (req, res) => {
         foto3 ,
         localizacao 
    }   = req.body
-   
+
    const connection = createConnection();
    connection.query(
     'INSERT INTO reports (nome, centroDeCustos, refAreaAtuacao, descricao, foto1, foto2, foto3, localizacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
@@ -36,4 +36,4 @@ router.post('/cadastrarReport', (req, res) => {
   res.json(usuarios);
 });
 
-
+module.exports = router;
