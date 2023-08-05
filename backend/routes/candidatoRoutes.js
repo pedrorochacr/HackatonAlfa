@@ -166,8 +166,29 @@ router.post(
     );
   }
 );
+router.get('/',async (req, res) => {
+    // Rota que cadastra um report no banco de dados
+    
+   
 
-// Função para inserir os dependentes na tabela "dependentes" usando callbacks
+    const connection = createConnection();
+    connection.query(
+      'select * from CANDIDATO',
+      (err, result) => {
+        if (err) {
+          console.error('Erro ao pesquisar candidatos:', err);
+          res
+            .status(500)
+            .json({ error: 'Erro ao pesquisar candidatos' });
+        } else {
+          const resultado = result;
+          console.log(result)
+          res.send(resultado);
+        }
+      }
+    );
+  }
+);
 async function insertDependentes(idCandidato, dependentes) {
   // Monta os valores para o INSERT na tabela "dependentes"
   const values = dependentes.map((dependente) => [
