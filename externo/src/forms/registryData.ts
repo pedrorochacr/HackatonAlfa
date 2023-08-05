@@ -33,7 +33,7 @@ export const registryData: FormInput[] = [
     name: 'dataEmissao',
     element: 'input',
     inputType: 'date',
-    label: 'Cidade do orgão emissor',
+    label: 'Data de emissão',
     placeholder: 'Ex: Belo Horizonte',
   },
   {
