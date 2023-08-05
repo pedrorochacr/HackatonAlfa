@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-export default function ReportPage() {
+export default function cadastroAreaEquipamentoPage() {
   const [codigo, setCodigo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('NÃO');
@@ -39,9 +39,9 @@ export default function ReportPage() {
       if (anexo) {
         formData.append('anexo', anexo);
       }
-
+      console.log(codigo, descricao, status, anexo);
       // Faça a requisição para o backend aqui usando axios ou fetch
-      await axios.post('http://localhost:4000/report/cadastrarArea', formData);
+      await axios.post('http://localhost:4000/cadastrarAreaOuEquipamento/cadastrarAreaOuEquipamento', formData);
 
       alert('Área ou equipamento cadastrado com sucesso');
       // Limpar os campos após o envio bem-sucedido, se necessário
