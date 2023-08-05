@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function ReportPage() {
   const [nome, setNome] = useState('');
@@ -110,6 +111,8 @@ export default function ReportPage() {
       console.error('Geolocalização não suportada neste navegador.');
     }
   };
+  alert("Relato enviado com sucesso");
+  const router = useRouter();
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -152,8 +155,7 @@ export default function ReportPage() {
         body: formData,
       })
 
-      // Após o envio bem-sucedido, redirecionar para a página inicial
-      // window.location.href = '/'; // Redirecionar manualmente para evitar erro de router não montado
+      router.push('/criarConta');
     } catch (error) {
       // Lógica para tratamento de erro
       console.error('Erro ao enviar relato:', error);
