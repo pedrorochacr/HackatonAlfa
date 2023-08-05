@@ -69,6 +69,9 @@ router.post(
       alojado,
       pcd,
       parenteOuAmigo,
+      conhecidoNome,
+      conhecidoCidade,
+      conhecidoFuncao
     } = req.body;
     let dependentes;
     if (req.body.dependentes) {
@@ -86,7 +89,7 @@ router.post(
 
     const connection = createConnection();
     connection.query(
-      'INSERT INTO CANDIDATO (nomeCompletoMae, nomeCompletoPai, nomeCompleto, sexo, estadoCivil, grauInstrucao, raca, dataNascimento, nacionalidade, paisNascimento, estadoNascimento, cidadeNascimento, numeroBotina, numeroCalca, tamanhoCamisa, telefone1, telefone2, email, cep, pais, estado, cidade, bairro, tipoLogradouro, enderecoResidencial, numero, complementoEndereco, rg, emissorRg, estadoOrgaoEmissor, cidadeEmissorRg, dataEmissao, numeroCpf, numeroPis, funcao, alojado, pcd, arquivoIdentidade, arquivoCpf, arquivoCurriculo, arquivoCnh, arquivoReservista, parenteOuAmigo, admitido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO CANDIDATO (nomeCompletoMae, nomeCompletoPai, nomeCompleto, sexo, estadoCivil, grauInstrucao, raca, dataNascimento, nacionalidade, paisNascimento, estadoNascimento, cidadeNascimento, numeroBotina, numeroCalca, tamanhoCamisa, telefone1, telefone2, email, cep, pais, estado, cidade, bairro, tipoLogradouro, enderecoResidencial, numero, complementoEndereco, rg, emissorRg, estadoOrgaoEmissor, cidadeEmissorRg, dataEmissao, numeroCpf, numeroPis, funcao, alojado, pcd, arquivoIdentidade, arquivoCpf, arquivoCurriculo, arquivoCnh, arquivoReservista, parenteOuAmigo, admitido, conhecidoNome, conhecidoCidade, conhecidoFuncao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         nomeCompletoMae,
         nomeCompletoPai,
@@ -132,6 +135,9 @@ router.post(
         arquivoReservista,
         parenteOuAmigo,
         false,
+        conhecidoNome,
+        conhecidoCidade,
+        conhecidoFuncao
       ],
       (err, result) => {
         if (err) {

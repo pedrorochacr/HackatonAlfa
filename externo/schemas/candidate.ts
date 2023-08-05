@@ -56,6 +56,9 @@ export const candidateSchema = z.object({
   termos: z
     .boolean()
     .refine((v) => v === true, { message: 'Aceite os termos' }),
+  conhecidoNome: z.string().optional(),
+  conhecidoCidade: z.string().optional(),
+  conhecidoFuncao: z.string().optional(),
 });
 
 export type CandidateForm = z.infer<typeof candidateSchema>;

@@ -25,12 +25,14 @@ export default function SubscriptionPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
     control,
   } = useForm<CandidateForm>({
     resolver: zodResolver(candidateSchema),
   });
   const [functions, setFunctions] = useState<Function[]>([]);
+  const watchParenteOuAmigo = watch('parenteOuAmigo');
 
   useEffect(() => {
     fetch('http://localhost:4000/candidato/listarFuncoes')
@@ -355,76 +357,129 @@ export default function SubscriptionPage() {
               </div>
             );
           })}
-
-          <p>
-            <span className="mr-2">Dependentes</span>
+          {watchParenteOuAmigo === 'Sim' && (
+            <div>
+              <label className="label">
+                <span className="label-text">Nome do conhecido</span>
+              </label>
+              <input
+                className="input input-bordered w-full"
+                type="text"
+                placeholder="Nome"
+                {...register('conhecidoNome')}
+              />
+              {errors['conhecidoNome'] && (
+                <span className="text-xs text-error">
+                  {errors && errors['conhecidoNome']?.message}
+                </span>
+              )}
+              <label className="label">
+                <span className="label-text">Cidade do conhecido</span>
+              </label>
+              <input
+                className="input input-bordered w-full"
+                type="text"
+                placeholder="Cidade"
+                {...register('conhecidoCidade')}
+              />
+              {errors['conhecidoCidade'] && (
+                <span className="text-xs text-error">
+                  {errors && errors['conhecidoCidade']?.message}
+                </span>
+              )}
+              <label className="label">
+                <span className="label-text">Função do conhecido</span>
+              </label>
+              <select
+                className="select select-bordered w-full"
+                {...register('conhecidoFuncao')}
+              >
+                <option selected>Escolha...</option>
+                {functions.map((option) => {
+                  return (
+                    <option key={option.id} value={option.descricao}>
+                      {option.descricao}
+                    </option>
+                  );
+                })}
+              </select>
+              {errors['conhecidoNome'] && (
+                <span className="text-xs text-error">
+                  {errors && errors['conhecidoNome']?.message}
+                </span>
+              )}
+            </div>
+          )}
+        </section>
+        <section className="flex flex-col">
+          <div className="flex flex-row">
+            <p className="mr-2">Dependentes</p>
             <button className="btn btn-secondary" onClick={addDependent}>
               +
             </button>
-            {fields.map((field, index) => {
-              return (
-                <div key={field.id}>
-                  <label className="label">
-                    <span className="label-text">Dependente {index + 1}</span>
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      className="input input-bordered w-full"
-                      type="text"
-                      placeholder="Nome Completo"
-                      {...register(
-                        `dependentes.${index}.nomeCompleto` as const
-                      )}
-                    />
-                    <input
-                      className="input input-bordered w-full"
-                      type="text"
-                      placeholder="CPF"
-                      {...register(`dependentes.${index}.cpf` as const)}
-                    />
-                    <select
-                      className="select select-bordered w-full"
-                      {...register(`dependentes.${index}.sexo` as const)}
-                    >
-                      <option selected>Escolher...</option>
-                      <option value="Masculino">Masculino</option>
-                      <option value="Feminino">Feminino</option>
-                    </select>
+          </div>
 
-                    <input
-                      className="input input-bordered w-full"
-                      type="date"
-                      placeholder="Data de Nascimento"
-                      {...register(
-                        `dependentes.${index}.dataNascimento` as const
-                      )}
-                    />
-                    <select
-                      className="select select-bordered w-full"
-                      {...register(
-                        `dependentes.${index}.grauParentesco` as const
-                      )}
-                    >
-                      <option selected>Escolher...</option>
-                      <option value="Filho">Filho</option>
-                      <option value="Conjugue">Conjugue</option>
-                    </select>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => remove(index)}
-                    >
-                      Remover
-                    </button>
-                  </div>
-                  {errors.dependentes && (
-                    <span className="text-xs text-error w-full">
-                      Um ou mais dependentes não foram preenchidos corretamente
-                    </span>
-                  )}
+          {fields.map((field, index) => {
+            return (
+              <div key={field.id}>
+                <label className="label">
+                  <span className="label-text">Dependente {index + 1}</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    className="input input-bordered w-full"
+                    type="text"
+                    placeholder="Nome Completo"
+                    {...register(`dependentes.${index}.nomeCompleto` as const)}
+                  />
+                  <input
+                    className="input input-bordered w-full"
+                    type="text"
+                    placeholder="CPF"
+                    {...register(`dependentes.${index}.cpf` as const)}
+                  />
+                  <select
+                    className="select select-bordered w-full"
+                    {...register(`dependentes.${index}.sexo` as const)}
+                  >
+                    <option selected>Escolher...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                  </select>
+
+                  <input
+                    className="input input-bordered w-full"
+                    type="date"
+                    placeholder="Data de Nascimento"
+                    {...register(
+                      `dependentes.${index}.dataNascimento` as const
+                    )}
+                  />
+                  <select
+                    className="select select-bordered w-full"
+                    {...register(
+                      `dependentes.${index}.grauParentesco` as const
+                    )}
+                  >
+                    <option selected>Escolher...</option>
+                    <option value="Filho">Filho</option>
+                    <option value="Conjugue">Conjugue</option>
+                  </select>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => remove(index)}
+                  >
+                    Remover
+                  </button>
                 </div>
-              );
-            })}
-          </p>
+                {errors.dependentes && (
+                  <span className="text-xs text-error w-full">
+                    Um ou mais dependentes não foram preenchidos corretamente
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </section>
         <section className="flex flex-row gap-2 justfify-center flex-wrap">
           <input
