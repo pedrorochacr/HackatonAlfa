@@ -2,9 +2,32 @@
 
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname +
+        '-' +
+        Date.now() +
+        '.' +
+        file.originalname.split('.').pop()
+    );
+  },
+});
+
 
 const { createConnection } = require('../config/config'); 
-router.post('/cadastrarReport', (req, res) => {
+router.post('/cadastrarReport', upload.fields([
+    { name: 'foto1', maxCount: 1 },
+    { name: 'foto2', maxCount: 1 },
+    { name:'foto3', maxCount: 1 },
+  ]),
+  async (req, res) => {
 
     // Rota que cadastra um report no banco de dados
    const {
@@ -12,12 +35,12 @@ router.post('/cadastrarReport', (req, res) => {
         centroDeCustos ,
         refAreaAtuacao ,
         descricao ,
-        foto1 ,
-        foto2 ,
-        foto3 ,
         localizacao 
    }   = req.body
-
+   const foto1 = req.files['arquivoIdentidade'].filename;
+    const foto2 = req.files['arquivoCpf'].filename;
+    const foto3 = req.files['arquivoCurriculo'].filename;
+  
    const connection = createConnection();
    connection.query(
     'INSERT INTO reports (nome, centroDeCustos, refAreaAtuacao, descricao, foto1, foto2, foto3, localizacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
