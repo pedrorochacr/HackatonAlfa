@@ -1,12 +1,14 @@
 'use client';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function cadastroAreaEquipamentoPage() {
   const [codigo, setCodigo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('NÃO');
   const [anexo, setAnexo] = useState<File | null>(null);
+  const router = useRouter();
 
   const handleCodigoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCodigo(event.target.value);
@@ -39,11 +41,11 @@ export default function cadastroAreaEquipamentoPage() {
       if (anexo) {
         formData.append('anexo', anexo);
       }
-      console.log(codigo, descricao, status, anexo);
       // Faça a requisição para o backend aqui usando axios ou fetch
       await axios.post('http://localhost:4000/cadastrarAreaOuEquipamento/cadastrarAreaOuEquipamento', formData);
 
       alert('Área ou equipamento cadastrado com sucesso');
+      router.push('/');
       // Limpar os campos após o envio bem-sucedido, se necessário
       setCodigo('');
       setDescricao('');
