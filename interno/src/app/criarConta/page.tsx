@@ -4,32 +4,24 @@ import "./page.css";
 import { useRouter } from 'next/navigation';
 import axios from "axios";
 
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(' ')
-}
-function criarUsuario(nome: string, email: string, senha: string) {
-    const novoUsuario = {
-      nome: nome,
-      email: email,
-      senha: senha,
-    };
+async function cadastrarUsuario(nome: string, cargo: string, email: string, senha: string) {
+    const novoUsuario = new FormData();
+    novoUsuario.append('nome', nome);
+    novoUsuario.append('cargo', cargo);
+    novoUsuario.append('email', email);
+    novoUsuario.append('senha', senha);
     
-    axios.post("http://localhost:3001/criaUsuario", novoUsuario)
-    .then(response => {
-      console.log('Usuário criado com sucesso');
-      
-      // Faça o tratamento adicional necessário após a criação do usuário
+    await fetch('http://localhost:4000/criarConta/cadastrarUsuario', {
+        method: 'POST',
+        body: novoUsuario,
     })
-    .catch(error => {
-      console.error('Erro ao criar usuário', error);
-      // Faça o tratamento de erro necessário
-    });
-  } 
+} 
 export default function CreateAccount() {
   const [agreed, setAgreed] = useState(false)
   const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')
     const [nome, setNome] = useState('')
+    const [cargo, setCargo]= useState('')
     const router = useRouter();
   const handleEmailChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setEmail(event.target.value);
@@ -39,6 +31,9 @@ export default function CreateAccount() {
   };
   const handleNomeChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setNome(event.target.value);
+  };
+  const handleCargoChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+    setCargo(event.target.value);
   };
   return (
     <div
@@ -78,7 +73,21 @@ export default function CreateAccount() {
               />
             </div>
           </div>
-         
+          <div className="sm:col-span-2"> 
+            <label htmlFor="first-name" className="block text-sm font-semibold leading-6">
+              Cargo
+            </label>
+            <div className="mt-2.5">
+              <input
+                type="text"
+                name="first-name"
+                id="first-name"
+                value={cargo}
+                onChange={handleCargoChange}
+                className="block emailInput w-300 rounded-md border-0 px-3.5 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
           <div className="sm:col-span-2">
             <label htmlFor="email" className="block text-sm font-semibold leading-6">
               Email
@@ -118,7 +127,7 @@ export default function CreateAccount() {
             type="submit"
             className="block botaoCriar w-full rounded-md bg-indigo-600 px-3.5 py-2.5  text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={()=>{
-                criarUsuario(nome, email, senha) 
+                cadastrarUsuario(nome, cargo, email, senha) 
                 router.push('/')  
             }}
           >

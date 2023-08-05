@@ -14,11 +14,11 @@ console.log('Connected to PlanetScale!')
 
 const candidatoRoutes = require('./routes/candidatoRoutes');
 const reportRoutes = require('./routes/reportsRoutes');
-
+const criarContaRoutes = require('./routes/criarContaRoutes');
 
 app.use('/candidato', candidatoRoutes);
 app.use('/report', reportRoutes);
-
+app.use('/criarConta', criarContaRoutes);
 
 app.listen(port, () => {
     console.log(`Servidor está ouvindo na porta ${port}`);
