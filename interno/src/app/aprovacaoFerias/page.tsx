@@ -20,7 +20,7 @@ export default function aprovacaoFerias() {
     useEffect(() => {
       // console.log("entrou aqui");
       if(session?.user.nome && aprovacao == "Sim"){
-        //setId_gerente(session?.user.nome);
+        if(session?.user.id) setId_gerente(session?.user.id);
         setVisualizacaoResponsavel(true);
       }else {
         setVisualizacaoResponsavel(false);
@@ -57,7 +57,7 @@ export default function aprovacaoFerias() {
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
 
-        if (visualizacao && (!aprovacao || !id_gerente || !idSolicitacaoFerias)) {
+        if (visualizacao && (!aprovacao || (visualizacaoResponsavel && !id_gerente) || !idSolicitacaoFerias)) {
             alert('Todos campos são obrigatórios.');
             return;
         }

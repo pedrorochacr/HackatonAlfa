@@ -43,7 +43,7 @@ export default function solocitacaoFerias() {
          }
       });
       
-      alert('Solicitação de Férias enviada para aprovação com sucesso');
+      alert('Solicitação de Recisão enviada para aprovação com sucesso');
       router.push('/');
       // Limpar os campos após o envio bem-sucedido, se necessário
       setData('');
