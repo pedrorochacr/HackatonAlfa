@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const { createConnection } = require('../config/config');
+
+
 router.post('/', async (req, res) => {
   const {data, tipo, id_colaborador} = req.body;
+  
   const connection = createConnection();
   connection.query(
     'INSERT INTO solicitacaoRecisao (data, tipo, id_colaborador) VALUES (?, ?, ?)',

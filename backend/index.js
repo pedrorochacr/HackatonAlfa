@@ -8,7 +8,7 @@ app.use(express.json());
 
 const port = process.env.PORT;
 
-console.log('Connected to PlanetScale!');
+console.log('Connected to PlanetScale!');//Banco de DAdos
 
 const candidatoRoutes = require('./routes/candidatoRoutes');
 const reportRoutes = require('./routes/reportsRoutes');

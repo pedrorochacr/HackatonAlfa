@@ -68,24 +68,18 @@ export default function TabelaCandidatos() {
         
     };
      function aprovarCandidato(candidato: Candidato){
-        axios
-        .put(`http://localhost:4000/candidato/aprovaCandidato?id=${candidato.id}`)
-        .then(response => {
-            console.log(response)
-            if (response.status === 200) {
-            
-              setAtualizou(true);
-
-           
-            } else {
-            console.error('Erro interno do servidor');
-            
-            }
+        
+        axios.post('http://localhost:4000/candidato/aprovaCandidato', candidato)
+        .then((response) => {
+           if(response.status === 200){
+            setAtualizou(true)
+           }
+          console.log(response.data.message);
         })
         .catch((error) => {
-            console.error('Erro interno do servidor');
-            
+          console.error('Erro ao aprovar candidato:', error);
         });
+        
     }
     // Função para renderizar os candidatos em uma tabela
     const renderCandidatesTable = () => {
