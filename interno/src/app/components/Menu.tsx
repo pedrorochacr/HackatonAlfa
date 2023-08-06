@@ -16,7 +16,6 @@ export default async function Menu() {
           className="h-[50px]"
         />
       </div>
-
       {/* Buttons */}
       <div className="flex items-center space-x-4">
         {session ? (
@@ -29,7 +28,14 @@ export default async function Menu() {
             Login
           </Link>
         )}
-
+        {session && (
+          <Link
+            href="/reports"
+            className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-blue-600"
+          >
+            Reports
+          </Link>
+        )}
         {session && (
           <Link
             href="/candidatos"
