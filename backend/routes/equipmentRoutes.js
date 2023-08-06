@@ -22,7 +22,7 @@ const upload = multer({ storage: storage });
 
 const { createConnection } = require('../config/config');
 
-router.get('/:codigo', async (req, res) => {
+router.get('/:codigo', async (req, res) => {  //realiza select no equipamento do link no qrCode
   const codigo = req.params.codigo;
   const connection = createConnection();
   connection.query(
@@ -45,13 +45,13 @@ router.get('/:codigo', async (req, res) => {
   );
 });
 
-router.post(
+router.post( //cadastra uma nova area ou novo quipamento no banco de dados
   '/cadastrarAreaOuEquipamento',
   upload.single('anexo'),
   async (req, res) => {
     // Rota que cadastra um report no banco de dados
     const { codigo, descricao, status, tipo } = req.body;
-    const anexo = req.file ? req.file.filename : '';
+    const anexo = req.file ? req.file.filename : ''; //configurações específicas para envio de anexo
     const connection = createConnection();
     connection.query(
       'INSERT INTO areaOuEquipamento (codigo, descricao, status, anexo, tipo) VALUES (?, ?, ?, ?, ?)',

@@ -19,10 +19,10 @@ const storage = multer.diskStorage({//define o nome do arquivo que será armazen
 });
 const upload = multer({ storage: storage });
 
-const { createConnection } = require('../config/config');
+const { createConnection } = require('../config/config'); //realiza insert de reports no banco
 router.post(
   '/cadastrarReport',
-  upload.fields([
+  upload.fields([ //configuração para envio de imagens anexas
     { name: 'foto1', maxCount: 1 },
     { name: 'foto2', maxCount: 1 },
     { name: 'foto3', maxCount: 1 },
@@ -62,7 +62,7 @@ router.post(
     );
   }
 );
-router.get('/',async (req, res) => {
+router.get('/',async (req, res) => { //select para visualização de reports externos nas página do sistema interno
   // Rota que cadastra um report no banco de dados
   const connection = createConnection();
   connection.query(

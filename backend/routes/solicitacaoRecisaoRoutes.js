@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { createConnection } = require('../config/config');
+const { createConnection } = require('../config/config'); //insert da solicitacao de recisão com inserção no banco de dados
 router.post('/', async (req, res) => {
   const {data, tipo, id_colaborador} = req.body;
   const connection = createConnection();

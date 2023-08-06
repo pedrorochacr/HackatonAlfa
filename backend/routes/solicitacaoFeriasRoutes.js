@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { createConnection } = require('../config/config');
-router.post('/', async (req, res) => {
+router.post('/', async (req, res) => { //insert de solicitacao de férias no banco de dados
   const {dataInicio, dataFinal, id_colaborador} = req.body;
   const connection = createConnection();
   connection.query(

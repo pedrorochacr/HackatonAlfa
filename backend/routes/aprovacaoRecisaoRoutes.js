@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { createConnection } = require('../config/config');
+const { createConnection } = require('../config/config'); //faz o insert dos dados de aprovacao na tabela aprovacao do banco de dados, para manutencao de registro
 router.post('/', async (req, res) => {
   const {aprovacao, rank, id_gerente, id_solicitacaoRecisao} = req.body;
   console.log(req.body);
@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
   );
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => { //realiza select na solicitacao para que o coordenador avalie a aprovação
   const idSolicitacao = req.params.id;
   // Rota que cadastra um report no banco de dados
   const { createConnection } = require('../config/config');

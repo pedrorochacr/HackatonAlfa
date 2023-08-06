@@ -9,7 +9,7 @@ app.use(express.json());
 const port = process.env.PORT;
 
 console.log('Connected to PlanetScale!');
-
+//rotas para operações no banco de dados
 const candidatoRoutes = require('./routes/candidatoRoutes');
 const reportRoutes = require('./routes/reportsRoutes');
 const authRoutes = require('./routes/authRoutes');
