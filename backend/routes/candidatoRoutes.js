@@ -188,6 +188,8 @@ router.post(
             .status(500)
             .json({ error: 'Erro ao inserir os dados no banco de dados.' });
         } else {
+          console.log('Candidato cadastrado com sucesso!');
+          // se o candidato for cadastrado, é enviada uma mensagem no whatssApp para ele
           const venom = require('venom-bot');
           venom
             .create({

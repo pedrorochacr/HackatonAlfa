@@ -34,20 +34,20 @@ export const registryData: FormInput[] = [
     element: 'input',
     inputType: 'date',
     label: 'Data de emissão',
-    placeholder: 'Ex: Belo Horizonte',
+    placeholder: 'Ex: dd/mm/aaaa',
   },
   {
     name: 'numeroCpf',
     element: 'input',
     inputType: 'text',
     label: 'Numero do CPF',
-    placeholder: 'Ex: Belo Horizonte',
+    placeholder: 'Ex: 99999999999',
   },
   {
     name: 'numeroPis',
     element: 'input',
     inputType: 'text',
     label: 'Numero do PIS',
-    placeholder: 'Ex: Belo Horizonte',
+    placeholder: 'Ex: 17033259504',
   },
 ];

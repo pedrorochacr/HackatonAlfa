@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
-const storage = multer.diskStorage({
+const storage = multer.diskStorage({//define o nome do arquivo que será armazenado
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
@@ -31,7 +31,6 @@ router.post(
     // Rota que cadastra um report no banco de dados
     const { nome, centroDeCustos, refAreaAtuacao, descricao, localizacao } =
       req.body;
-    // console.log(req.files);
     const foto1 = req.files['foto1'][0].filename;
     const foto2 = req.files['foto2'] ? req.files['foto2'][0].filename : '';
     const foto3 = req.files['foto3'] ? req.files['foto3'][0].filename : '';

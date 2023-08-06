@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CandidateForm, candidateSchema } from '@/schemas/candidate';
 import { FormInput } from '@/forms/types';
 import { personalData } from '@/forms/personal_data';
 import { birthData } from '@/forms/birth_data';
@@ -17,6 +16,7 @@ import { otherData } from '@/forms/other';
 import { archiveData } from '@/forms/archive';
 import { ResponseCandidato } from '@/types/responseCandidato';
 import { Function, ResponseError } from '@/types/generic';
+import { CandidateForm, candidateSchema } from '@/schemas/candidate';
 
 export default function SubscriptionPage() {
   const {
