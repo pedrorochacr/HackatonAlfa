@@ -36,7 +36,7 @@ export default function LoginPage() {
       setError(res.error);
       return;
     }
-
+    
     router.push('/');
   }
 
