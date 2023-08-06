@@ -1,6 +1,8 @@
 'use client';
+
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ReportPage() {
   const [nome, setNome] = useState('');
@@ -16,32 +18,30 @@ export default function ReportPage() {
   const [foto1Error, setFoto1Error] = useState('');
   const router = useRouter();
 
+  // Pede a permissão para acessar a localização do usuário
   useEffect(() => {
     handleGetLocation();
-  }, [])
+  }, []);
 
+  // Funções para atualizar os estados
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
   };
-
   const handleCentroDeCustosChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCentroDeCustos(event.target.value);
   };
-
   const handleRefAreaAtuacaoChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRefAreaAtuacao(event.target.value);
   };
-
   const handleDescricaoChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setDescricao(event.target.value);
   };
-
   const handleFotoChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     index: number
@@ -53,13 +53,11 @@ export default function ReportPage() {
       setFotos(newFotos);
     }
   };
-
   const handleAddFoto = () => {
     if (fotos.length < 3) {
       setFotos([...fotos, { file: null, filled: false }]);
     }
   };
-
   const handleRemoveFoto = (index: number) => {
     if (fotos.length > 1) {
       const newFotos = fotos.filter((_, i) => i !== index);
@@ -67,8 +65,10 @@ export default function ReportPage() {
     }
   };
 
-  const handleTakePhoto = async (index: number) => {
+  // Função para tirar foto
+  async function handleTakePhoto(index: number) {
     try {
+      // Pede permissão para acessar a câmera
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
@@ -90,14 +90,16 @@ export default function ReportPage() {
         newFotos[index] = { file, filled: true };
         setFotos(newFotos);
 
+        // @ts-ignore
         video.srcObject?.getTracks().forEach((track) => track.stop());
       };
     } catch (error) {
       console.error('Erro ao acessar a câmera:', error);
     }
-  };
+  }
 
-  const handleGetLocation = () => {
+  // Pede permissão para acessar a localização do usuário e salvar no estado
+  function handleGetLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -112,11 +114,12 @@ export default function ReportPage() {
     } else {
       console.error('Geolocalização não suportada neste navegador.');
     }
-  };
+  }
 
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
+  async function handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
 
+    // Atualizar a localização
     handleGetLocation();
 
     // Validar os campos obrigatórios
@@ -136,6 +139,7 @@ export default function ReportPage() {
       formData.append('refAreaAtuacao', refAreaAtuacao);
       formData.append('descricao', descricao);
       formData.append('localizacao', String(localizacao));
+
       fotos.forEach((foto, index) => {
         console.log(foto);
         if (foto.file) {
@@ -162,9 +166,10 @@ export default function ReportPage() {
       // Lógica para tratamento de erro
       console.error('Erro ao enviar relato:', error);
     }
-  };
+  }
 
-  const dataURLtoFile = (dataURL: string, filename: string): File | null => {
+  // Transforma uma dataURL em um arquivo para exibir a foto
+  function dataURLtoFile(dataURL: string, filename: string): File | null {
     const arr = dataURL.split(',');
     const mime = arr[0].match(/:(.*?);/)![1];
     const bstr = atob(arr[1]);
@@ -174,7 +179,7 @@ export default function ReportPage() {
       u8arr[n] = bstr.charCodeAt(n);
     }
     return new File([u8arr], filename, { type: mime });
-  };
+  }
 
   return (
     <div className="px-6 py-10 lg:px-8">
@@ -305,11 +310,13 @@ export default function ReportPage() {
                 Foto {index + 1}
               </label>
               <div className="mt-2.5 flex items-center">
-                {foto.filled ? (
-                  <img
+                {foto.file && foto.filled ? (
+                  <Image
                     src={URL.createObjectURL(foto.file)}
                     alt={`Foto ${index + 1}`}
                     className="w-32 h-32 object-cover rounded-md"
+                    width={128}
+                    height={128}
                   />
                 ) : (
                   <input
