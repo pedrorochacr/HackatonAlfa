@@ -80,7 +80,6 @@ export default function AprovacaoFeriasPage() {
     }
 
     try {
-      console.log(aprovacao, id_gerente, idSolicitacaoFerias); // Faça a requisição para o backend aqui usando axios ou fetch
       const res = await fetch('http://localhost:4000/aprovacaoFerias/', {
         method: 'POST',
         body: JSON.stringify({
@@ -94,10 +93,8 @@ export default function AprovacaoFeriasPage() {
       });
 
       alert('Solicitação de Férias enviada para aprovação com sucesso');
-      //router.push('/');
     } catch (error) {
       console.error('Erro ao salvar resposta:', error);
-      // Lógica para tratamento de erro
     }
   };
 
