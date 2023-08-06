@@ -41,7 +41,6 @@ export default function AprovacaoFeriasPage() {
     );
     console.log(response.data);
 
-    alert('Buscando dados no banco');
     if (response.status == 200) {
       setVisualizacao(true);
       setSolicitacao(response.data);
@@ -80,7 +79,7 @@ export default function AprovacaoFeriasPage() {
     }
 
     try {
-      const res = await fetch('http://localhost:4000/aprovacaoFerias/', {
+      await fetch('http://localhost:4000/aprovacaoFerias/', {
         method: 'POST',
         body: JSON.stringify({
           aprovacao: aprovacao,

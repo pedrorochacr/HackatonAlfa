@@ -42,7 +42,6 @@ export default function AprovacaoFeriasPage() {
     );
     console.log(response.data);
 
-    alert('Buscando dados no banco');
     if (response.status == 200) {
       setVisualizacao(true);
       setSolicitacao(response.data);

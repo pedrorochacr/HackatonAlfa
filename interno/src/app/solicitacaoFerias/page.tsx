@@ -1,30 +1,34 @@
 'use client';
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import axios from 'axios';
 
-
-
-export default function solicitacaoFerias() {
+export default function SolicitacaoFerias() {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFinal, setDataFinal] = useState('');
   const [id_colaborador, setId_colaborador] = useState('');
   const router = useRouter();
 
-  const handleDataInicioChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleDataInicioChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setDataInicio(event.target.value);
   };
 
-  const handleDataFinalChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleDataFinalChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setDataFinal(event.target.value);
   };
 
-  const handleId_colaboradorChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleId_colaboradorChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setId_colaborador(event.target.value);
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     if (!dataInicio || !dataFinal || !id_colaborador) {
@@ -32,20 +36,19 @@ export default function solicitacaoFerias() {
       return;
     }
 
-    try {  
-      console.log(dataInicio, dataFinal, id_colaborador);    // Faça a requisição para o backend aqui usando axios ou fetch
+    try {
       const res = await fetch('http://localhost:4000/solicitacaoFerias/', {
         method: 'POST',
         body: JSON.stringify({
-            "dataInicio": dataInicio,
-            "dataFinal": dataFinal,
-            "id_colaborador": id_colaborador 
-         }),
-         headers: {
-            'Content-Type': 'application/json'
-         }
+          dataInicio: dataInicio,
+          dataFinal: dataFinal,
+          id_colaborador: id_colaborador,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      
+
       alert('Solicitação de Férias enviada para aprovação com sucesso');
       router.push('/');
       // Limpar os campos após o envio bem-sucedido, se necessário
@@ -54,7 +57,6 @@ export default function solicitacaoFerias() {
       setId_colaborador('');
     } catch (error) {
       console.error('Erro ao enviar relato:', error);
-      // Lógica para tratamento de erro
     }
   };
 
