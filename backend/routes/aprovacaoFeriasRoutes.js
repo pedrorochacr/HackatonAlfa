@@ -4,6 +4,7 @@ const router = express.Router();
 const { createConnection } = require('../config/config');  //faz o insert dos dados de aprovacao na tabela aprovacao do banco de dados, para manutencao de registro
 router.post('/', async (req, res) => {
   const {aprovacao, id_gerente, id_solicitacaoFerias} = req.body;
+  
   console.log(req.body);
   const connection = createConnection();
   connection.query(

@@ -62,8 +62,8 @@ router.post(
     );
   }
 );
-router.get('/',async (req, res) => { //select para visualização de reports externos nas página do sistema interno
-  // Rota que cadastra um report no banco de dados
+router.get('/',async (req, res) => {
+  // Rota que pesquisa os reports no banco de dados
   const connection = createConnection();
   connection.query(
     'select * from reports',

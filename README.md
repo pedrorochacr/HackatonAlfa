@@ -1,5 +1,12 @@
 ## Equipe webFET Hackthon Alfa Engenharia 2023
 
+## Como excutar o sistema:
+git pull && npm instal em todos os diretórios
+No diretório "backend": node index.js
+No diretório "interno": npm run dev
+No diretório "externo": npm run dev 
+
+
 ## Organização da equipe
 
 O trabalho foi desenvolvido por Diogo Emanuel, Guilherme Augusto E Pedro Rocha
@@ -47,4 +54,5 @@ Diogo:
 ![image](https://github.com/pedrorochacr/HackatonAlfa/assets/93398906/40362023-c8f5-4ed7-b0e8-8829c19adba9)
 
 
-
+Alguns sripts do banco
+https://docs.google.com/document/d/1oMUPrzuiITjPvwmCW_Wml4IMvYgk_tdMjehU6uqNNZo/edit
