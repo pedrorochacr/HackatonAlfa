@@ -10,6 +10,7 @@ export default function CadastroAreaEquipamentoPage() {
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('NÃO');
   const [anexo, setAnexo] = useState<File | null>(null);
+  const [tipo, setTipo] = useState('Area');
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
 
@@ -49,12 +50,13 @@ export default function CadastroAreaEquipamentoPage() {
       formData.append('codigo', codigo);
       formData.append('descricao', descricao);
       formData.append('status', status);
+      formData.append('tipo', tipo);
       if (anexo) {
         formData.append('anexo', anexo);
       }
       // Faça a requisição para o backend aqui usando axios ou fetch
       await axios.post(
-        'http://localhost:4000/cadastrarAreaOuEquipamento/cadastrarAreaOuEquipamento',
+        'http://localhost:4000/equipment/cadastrarAreaOuEquipamento',
         formData
       );
 
@@ -88,7 +90,7 @@ export default function CadastroAreaEquipamentoPage() {
               htmlFor="codigo"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Código da Área ou Equipamento
+              Código
             </label>
             <div className="mt-2.5">
               <input
@@ -101,12 +103,30 @@ export default function CadastroAreaEquipamentoPage() {
               />
             </div>
           </div>
+          <div>
+            <label
+              htmlFor="type"
+              className="block text-sm font-semibold leading-6 text-gray-900"
+            >
+              Escolha o tipo de cadastro
+            </label>
+            <div className="mt-2.5">
+              <select
+                defaultValue={'Area'}
+                className="select select-bordered w-full bg-white text-black"
+                onChange={(e) => setTipo(e.target.value)}
+              >
+                <option value="Area">Área</option>
+                <option value="Equipamento">Equipamento</option>
+              </select>
+            </div>
+          </div>
           <div className="sm:col-span-2">
             <label
               htmlFor="descricao"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Descrição da Área ou Equipamento
+              Descrição
             </label>
             <div className="mt-2.5">
               <textarea
