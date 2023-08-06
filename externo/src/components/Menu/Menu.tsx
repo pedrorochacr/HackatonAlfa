@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 export default function Menu() {
   return (
-    <nav className="bg-[#003A65] p-4 gap-2 flex flex-col md:flex-row items-center justify-between">
-      {/* Logo */}
+    <nav className="bg-[rgb(0,58,101)] p-4 gap-2 flex flex-col md:flex-row items-center justify-between">
+    
       <Link href="/">
         <Image
           src="/assets/logo.png"
@@ -13,8 +13,6 @@ export default function Menu() {
           height={50}
         />
       </Link>
-
-      {/* Middle Items */}
       <ul className="flex space-x-4 text-white">
         <li>
           <Link className="hover:text-gray-300" href="/">
@@ -27,8 +25,6 @@ export default function Menu() {
           </Link>
         </li>
       </ul>
-
-      {/* Buttons */}
       <div className="flex items-center space-x-4">
         <Link
           href="/inscricao"

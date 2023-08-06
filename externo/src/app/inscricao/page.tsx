@@ -12,7 +12,7 @@ import { registryData } from '@/forms/registryData';
 import { otherData } from '@/forms/other';
 import { archiveData } from '@/forms/archive';
 import { useEffect, useState } from 'react';
-import { CandidateForm, candidateSchema } from '../../../schemas/candidate';
+import { CandidateForm, candidateSchema } from '../../schemas/candidate';
 import { useRouter } from 'next/navigation';
 
 type Function = {
