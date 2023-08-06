@@ -85,8 +85,10 @@ router.post(
 
     const arquivoIdentidade = req.files['arquivoIdentidade'][0].filename;
     if (arquivoIdentidade !== '')
-      similaridadeIdentidade = await utils.execShellCommand(
-        `python main.py uploads/${arquivoIdentidade} rg`
+      parseInt(
+        (similaridadeIdentidade = await utils.execShellCommand(
+          `python main.py uploads/${arquivoIdentidade} rg`
+        ))
       );
 
     const arquivoCpf = req.files['arquivoCpf'][0].filename;
@@ -96,16 +98,20 @@ router.post(
       ? req.files['arquivoCnh'][0].filename
       : '';
     if (arquivoCnh !== '')
-      similaridadeCnh = await utils.execShellCommand(
-        `python main.py uploads/${arquivoCnh} cnh`
+      parseInt(
+        (similaridadeCnh = await utils.execShellCommand(
+          `python main.py uploads/${arquivoCnh} cnh`
+        ))
       );
 
     const arquivoReservista = req.files['arquivoReservista']
       ? req.files['arquivoReservista'][0].filename
       : '';
     if (arquivoReservista !== '')
-      similaridadeReservista = await utils.execShellCommand(
-        `python main.py uploads/${arquivoReservista} reservista`
+      similaridadeReservista = parseInt(
+        await utils.execShellCommand(
+          `python main.py uploads/${arquivoReservista} reservista`
+        )
       );
 
     if (similaridadeIdentidade < 10 && similaridadeIdentidade != 0) {
@@ -190,29 +196,29 @@ router.post(
         } else {
           console.log('Candidato cadastrado com sucesso!');
           // se o candidato for cadastrado, é enviada uma mensagem no whatssApp para ele
-          const venom = require('venom-bot');
-          venom
-            .create({
-              session: 'bot',
-              headless: false,
-            })
-            .then((client) => start(client))
-            .catch((erro) => {
-              console.log(erro);
-            });
-          function start(client) {
-            telefone = telefone1.replace(/"/g, '');
+          // const venom = require('venom-bot');
+          // venom
+          //   .create({
+          //     session: 'bot',
+          //     headless: false,
+          //   })
+          //   .then((client) => start(client))
+          //   .catch((erro) => {
+          //     console.log(erro);
+          //   });
+          // function start(client) {
+          //   telefone = telefone1.replace(/"/g, '');
 
-            client
-              .sendText(
-                `${telefone}@c.us`,
-                'Olá, voce foi cadastrado com sucesso no sistema!'
-              )
-              .then((result) => {})
-              .catch((erro) => {
-                console.error('Error when sending: ', erro); //return object error
-              });
-          }
+          //   client
+          //     .sendText(
+          //       `${telefone}@c.us`,
+          //       'Olá, voce foi cadastrado com sucesso no sistema!'
+          //     )
+          //     .then((result) => {})
+          //     .catch((erro) => {
+          //       console.error('Error when sending: ', erro); //return object error
+          //     });
+          // }
           if (dependentes && dependentes.length > 0) {
             // Se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {

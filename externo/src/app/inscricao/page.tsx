@@ -119,6 +119,7 @@ export default function SubscriptionPage() {
     if (res.ok) {
       alert('Candidato cadastrado com sucesso');
       const json = (await res.json()) as ResponseCandidato;
+      console.log(json);
       setSimilaridades([
         json.similaridadeIdentidade,
         json.similaridadeCnh,
@@ -452,9 +453,9 @@ export default function SubscriptionPage() {
             </h4>
             {similaridades && similaridades.length > 0 && (
               <>
-                <p>Identidade: {similaridades[0].toFixed(2)}%</p>
-                <p>Cnh: {similaridades[1].toFixed(2)}%</p>
-                <p>Reservista: {similaridades[2].toFixed(2)}%</p>
+                <p>Identidade: {similaridades[0]}%</p>
+                <p>Cnh: {similaridades[1]}%</p>
+                <p>Reservista: {similaridades[2]}%</p>
               </>
             )}
             <div className="modal-action">
