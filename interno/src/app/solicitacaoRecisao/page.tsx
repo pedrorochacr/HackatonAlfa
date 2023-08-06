@@ -1,48 +1,65 @@
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
-export default function solocitacaoFerias() {
+export default function SolicitacaoRecisaoPage() {
   const [data, setData] = useState('');
   const [tipo, setTipo] = useState('');
   const [id_colaborador, setId_colaborador] = useState('');
   const router = useRouter();
 
-  const handleDataChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const { data: session, status: sessionStatus } = useSession();
+
+  if (sessionStatus === 'loading') {
+    return <p>Carregando...</p>;
+  }
+
+  if (!session || session.user.cargo !== 'admin') {
+    router.push('/');
+  }
+
+  const handleDataChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setData(event.target.value);
   };
 
-  const handleTipoChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleTipoChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setTipo(event.target.value);
   };
 
-  const handleId_colaboradorChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleId_colaboradorChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setId_colaborador(event.target.value);
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     if (!data || !tipo || !id_colaborador) {
       alert('Todos campos são obrigatórios.');
       return;
     }
-    try {  
-      console.log(data, tipo, id_colaborador);    // Faça a requisição para o backend aqui usando axios ou fetch
+    try {
+      console.log(data, tipo, id_colaborador); // Faça a requisição para o backend aqui usando axios ou fetch
       const res = await fetch('http://localhost:4000/solicitacaoRecisao/', {
         method: 'POST',
         body: JSON.stringify({
-            "data": data,
-            "tipo": tipo,
-            "id_colaborador": id_colaborador 
-         }),
-         headers: {
-            'Content-Type': 'application/json'
-         }
+          data: data,
+          tipo: tipo,
+          id_colaborador: id_colaborador,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      
+
       alert('Solicitação de Recisão enviada para aprovação com sucesso');
       router.push('/');
       // Limpar os campos após o envio bem-sucedido, se necessário
@@ -75,10 +92,7 @@ export default function solocitacaoFerias() {
           className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm"
           onSubmit={handleSubmit}
         >
-          <label
-            htmlFor="data"
-            className="block text-sm font-medium leading-6"
-          >
+          <label htmlFor="data" className="block text-sm font-medium leading-6">
             Data da recisão:
           </label>
           <div className="mt-2">
@@ -113,7 +127,9 @@ export default function solocitacaoFerias() {
             >
               <option value="">Selecione</option>
               <option value="Redução de efetivo">Redução de efetivo</option>
-              <option value="Demissão por desempenho">Demissão por desempenho</option>
+              <option value="Demissão por desempenho">
+                Demissão por desempenho
+              </option>
               <option value="Justa causa">Justa causa</option>
               <option value="Pedido de demissão">Pedido de demissão</option>
               <option value="Acordo legal">Acordo legal</option>

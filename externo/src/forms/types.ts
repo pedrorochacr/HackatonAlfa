@@ -1,4 +1,4 @@
-import { CandidateForm } from "../../schemas/candidate";
+import { CandidateForm } from "@/schemas/candidate";
 
 export type FormElement = 'input' | 'select';
 export type InputType =

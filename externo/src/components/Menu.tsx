@@ -19,11 +19,6 @@ export default function Menu() {
             Home
           </Link>
         </li>
-        <li>
-          <Link className="hover:text-gray-300" href="/">
-            Nossa Empresa
-          </Link>
-        </li>
       </ul>
       <div className="flex items-center space-x-4">
         <Link

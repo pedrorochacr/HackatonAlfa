@@ -1,9 +1,8 @@
 'use client';
 import React, { SetStateAction, useState } from 'react';
-import axios from "axios";
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import TabelaReports from '../components/Tabelas/ReportsTable';
-
 
 export default function ReportsPage() {
   const [mostrarPopup, setMostrarPopup] = useState(false);

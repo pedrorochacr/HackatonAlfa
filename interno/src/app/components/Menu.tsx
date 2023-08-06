@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { LogoutButton } from './LogoutButton';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/src/lib/auth';
+import Image from 'next/image';
 
 export default async function Menu() {
   const session = await getServerSession(authOptions);
@@ -10,14 +11,24 @@ export default async function Menu() {
     <nav className="bg-[#003A65] p-4 gap-2 flex flex-col md:flex-row items-center justify-between">
       {/* Logo */}
       <div className="flex items-center space-x-2">
-        <img
+        <Image
           src="/assets/logo.png"
           alt="Logo da Empresa"
           className="h-[50px]"
+          width={50}
+          height={50}
         />
       </div>
       {/* Buttons */}
       <div className="flex items-center space-x-4">
+        {!session && (
+          <Link
+            href="/register"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Registrar
+          </Link>
+        )}
         {session ? (
           <LogoutButton />
         ) : (

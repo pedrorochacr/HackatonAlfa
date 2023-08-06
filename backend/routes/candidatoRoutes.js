@@ -85,8 +85,10 @@ router.post(
 
     const arquivoIdentidade = req.files['arquivoIdentidade'][0].filename;
     if (arquivoIdentidade !== '')
-      similaridadeIdentidade = await utils.execShellCommand(
-        `python main.py uploads/${arquivoIdentidade} rg`
+      parseInt(
+        (similaridadeIdentidade = await utils.execShellCommand(
+          `python main.py uploads/${arquivoIdentidade} rg`
+        ))
       );
 
     const arquivoCpf = req.files['arquivoCpf'][0].filename;
@@ -96,16 +98,20 @@ router.post(
       ? req.files['arquivoCnh'][0].filename
       : '';
     if (arquivoCnh !== '')
-      similaridadeCnh = await utils.execShellCommand(
-        `python main.py uploads/${arquivoCnh} cnh`
+      parseInt(
+        (similaridadeCnh = await utils.execShellCommand(
+          `python main.py uploads/${arquivoCnh} cnh`
+        ))
       );
 
     const arquivoReservista = req.files['arquivoReservista']
       ? req.files['arquivoReservista'][0].filename
       : '';
     if (arquivoReservista !== '')
-      similaridadeReservista = await utils.execShellCommand(
-        `python main.py uploads/${arquivoReservista} reservista`
+      similaridadeReservista = parseInt(
+        await utils.execShellCommand(
+          `python main.py uploads/${arquivoReservista} reservista`
+        )
       );
 
     if (similaridadeIdentidade < 10 && similaridadeIdentidade != 0) {
@@ -192,7 +198,7 @@ router.post(
           // se o candidato for cadastrado, é enviada uma mensagem no whatssApp para ele
           
           if (dependentes && dependentes.length > 0) {
-            // se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
+            // Se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {
               if (err) {
                 console.error('Erro ao inserir os dependentes:', err);
@@ -201,9 +207,6 @@ router.post(
                 });
               } else {
                 console.log('Dependentes cadastrados com sucesso!');
-                res.status(200).json({
-                  message: 'Candidato e dependentes cadastrados com sucesso!',
-                });
               }
             });
           }
@@ -233,6 +236,7 @@ router.get('/', async (req, res) => {
     }
   });
 });
+
 router.post('/aprovaCandidato', (req, res) => {
   const candidato = req.body;
   const query = 'UPDATE CANDIDATO SET admitido = 1 where id = ?';
@@ -258,7 +262,7 @@ router.post('/aprovaCandidato', (req, res) => {
 
       client
         .sendText(
-          `${telefone}@c.us`,
+          `55${telefone}@c.us`,
           'Olá, voce foi aprovado no processo seletivo!'
         )
         .then((result) => {})
