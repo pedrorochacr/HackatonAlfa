@@ -21,11 +21,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const { createConnection } = require('../config/config');
+const { compressPdf } = require('../Util/CompactarArquivos');
 
 router.post('/cadastrarAreaOuEquipamento', upload.single('anexo'), async (req, res) => {
   // Rota que cadastra um report no banco de dados
   const { codigo, descricao, status } = req.body;
   const anexo = req.file ? req.file.filename : '';
+
+  console.log(anexo)
+  await compressPdf(anexo);
   const connection = createConnection();
   connection.query(
     'INSERT INTO areaOuEquipamento (codigo, descricao, status, anexo) VALUES (?, ?, ?, ?)',
