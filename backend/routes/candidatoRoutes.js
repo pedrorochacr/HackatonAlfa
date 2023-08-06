@@ -195,8 +195,6 @@ router.post(
             .json({ error: 'Erro ao inserir os dados no banco de dados.' });
         } else {
           console.log('Candidato cadastrado com sucesso!');
-          // se o candidato for cadastrado, é enviada uma mensagem no whatssApp para ele
-          
           if (dependentes && dependentes.length > 0) {
             // Se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {
