@@ -6,6 +6,8 @@ router.post('/register', async (req, res) => {
   const { email, senha, nome, cargo } = req.body;
 
   const connection = createConnection();
+
+  
   connection.query(
     'INSERT INTO usuario (email, senha, nome, cargo) VALUES (?, ?, ?, ?)',
     [email, senha, nome, cargo],
