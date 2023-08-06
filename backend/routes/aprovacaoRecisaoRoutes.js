@@ -7,7 +7,7 @@ router.post('/', async (req, res) => {
   console.log(req.body);
   const connection = createConnection();
   connection.query(
-    'INSERT INTO aprovacaoRecisao (aprovacao, rank, id_gerente, id_solicitacaoRecisao) VALUES (?, ?, ?, ?)',
+    'INSERT INTO aprovacaoRecisao (aprova, placar, idGerente, idSolicitacaoRevisao) VALUES (?, ?, ?, ?)',
     [aprovacao, rank, id_gerente, id_solicitacaoRecisao],
     (err, result) => {
       if (err) {

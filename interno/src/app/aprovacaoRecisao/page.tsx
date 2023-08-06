@@ -21,7 +21,7 @@ export default function aprovacaoFerias() {
   useEffect(() => {
     // console.log("entrou aqui");
     if(session?.user.nome && aprovacao == "Sim"){
-      //setId_gerente(session?.user.nome);
+      if(session?.user.id) setId_gerente(session?.user.id);
       setVisualizacaoResponsavel(true);
     }else {
       setVisualizacaoResponsavel(false);
@@ -47,7 +47,7 @@ export default function aprovacaoFerias() {
   const handleAprovacaoChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setAprovacao(event.target.value);
   };
-
+  
   const handleRankChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setRank(event.target.value);
   };
@@ -63,32 +63,34 @@ export default function aprovacaoFerias() {
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
 
-    if (visualizacao && ( !aprovacao || !rank || !id_gerente || !id_solicitacaoRecisao)) {
+    if (visualizacao && ( !aprovacao || !rank || (visualizacaoResponsavel && !id_gerente) || !id_solicitacaoRecisao)) {
       alert('Todos campos são obrigatórios.');
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append('aprovacao', aprovacao);
-      formData.append('rank', rank);
-      formData.append('dataFim', id_gerente);
-      formData.append('id_solicitacaoFerias', id_solicitacaoRecisao);
-      // Faça a requisição para o backend aqui usando axios ou fetch
-      await axios.post(
-        'http://localhost:4000/aprovacaoRecisao',
-        formData
-      );
-
-      alert('Solicitação respondida com sucesso');
-      router.push('/');
-      // Limpar os campos após o envio bem-sucedido, se necessário
+    try {  
+      console.log(aprovacao, rank, id_gerente, id_solicitacaoRecisao);    // Faça a requisição para o backend aqui usando axios ou fetch
+      const res = await fetch('http://localhost:4000/aprovacaoRecisao/', {
+        method: 'POST',
+        body: JSON.stringify({
+            "aprovacao": aprovacao,
+            "rank" : rank,
+            "id_gerente": id_gerente,
+            "id_solicitacaoRecisao": id_solicitacaoRecisao
+         }),
+         headers: {
+            'Content-Type': 'application/json'
+         }
+      });
+      
+      alert('Resposta enviada com sucesso');
       setAprovacao('');
       setRank('');
       setId_gerente('');
       setId_solicitacaoRecisao('');
+      //router.push('/');
     } catch (error) {
-      console.error('Erro ao enviar relato:', error);
+      console.error('Erro ao salvar resposta:', error);
       // Lógica para tratamento de erro
     }
   };
@@ -171,7 +173,7 @@ export default function aprovacaoFerias() {
                 id="rank"
                 name="rank"
                 value={rank}
-                onChange={handleAprovacaoChange}
+                onChange={handleRankChange}
                 className="input input-bordered w-full"
                 required
               >
