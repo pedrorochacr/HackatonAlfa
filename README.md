@@ -1,7 +1,13 @@
 ## Equipe webFET Hackthon Alfa Engenharia 2023
 
 ## Como excutar o sistema:
-git pull && npm instal em todos os diretórios
+Rodar npm/yarn/pnpm install em todos os 3 diretórios
+No diretório "backend": node index.js
+No diretório "interno": npm/yarn/pnpm build depois npm/yarn/pnpm start
+No diretório "externo": npm/yarn/pnpm build depois npm/yarn/pnpm start
+
+
+git pull && npm instal em todos os diretórios (caso nao funcione o anterior) para versão de dev
 No diretório "backend": node index.js
 No diretório "interno": npm run dev
 No diretório "externo": npm run dev 
