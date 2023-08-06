@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const utils = require('../lib/utils');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -71,21 +72,62 @@ router.post(
       parenteOuAmigo,
       conhecidoNome,
       conhecidoCidade,
-      conhecidoFuncao
+      conhecidoFuncao,
     } = req.body;
     let dependentes;
     if (req.body.dependentes) {
       dependentes = JSON.parse(req.body.dependentes);
     }
+
+    let similaridadeIdentidade = 0,
+      similaridadeCnh = 0,
+      similaridadeReservista = 0;
+
     const arquivoIdentidade = req.files['arquivoIdentidade'][0].filename;
+    if (arquivoIdentidade !== '')
+      similaridadeIdentidade = await utils.execShellCommand(
+        `python main.py uploads/${arquivoIdentidade} rg`
+      );
+
     const arquivoCpf = req.files['arquivoCpf'][0].filename;
     const arquivoCurriculo = req.files['arquivoCurriculo'][0].filename;
+
     const arquivoCnh = req.files['arquivoCnh']
       ? req.files['arquivoCnh'][0].filename
       : '';
+    if (arquivoCnh !== '')
+      similaridadeCnh = await utils.execShellCommand(
+        `python main.py uploads/${arquivoCnh} cnh`
+      );
+
     const arquivoReservista = req.files['arquivoReservista']
       ? req.files['arquivoReservista'][0].filename
       : '';
+    if (arquivoReservista !== '')
+      similaridadeReservista = await utils.execShellCommand(
+        `python main.py uploads/${arquivoReservista} reservista`
+      );
+
+    if (similaridadeIdentidade < 10 && similaridadeIdentidade != 0) {
+      res
+        .status(400)
+        .json({ error: 'Identidade não está legível. Adicione outra imagem' });
+      return;
+    }
+
+    if (similaridadeCnh < 10 && similaridadeCnh != 0) {
+      res
+        .status(400)
+        .json({ error: 'CNH não está legível. Adicione outra imagem' });
+      return;
+    }
+
+    if (similaridadeReservista < 10 && similaridadeReservista != 0) {
+      res
+        .status(400)
+        .json({ error: 'Reservista não está legível. Adicione outra imagem' });
+      return;
+    }
 
     const connection = createConnection();
     connection.query(
@@ -137,7 +179,7 @@ router.post(
         false,
         conhecidoNome,
         conhecidoCidade,
-        conhecidoFuncao
+        conhecidoFuncao,
       ],
       (err, result) => {
         if (err) {
@@ -147,6 +189,30 @@ router.post(
             .json({ error: 'Erro ao inserir os dados no banco de dados.' });
         } else {
           console.log('Candidato cadastrado com sucesso!');
+
+          // const venom = require('venom-bot');
+          // venom
+          //   .create({
+          //     session: 'bot',
+          //     headless: false,
+          //   })
+          //   .then((client) => start(client))
+          //   .catch((erro) => {
+          //     console.log(erro);
+          //   });
+          // function start(client) {
+          //   telefone = telefone1.replace(/"/g, '');
+
+          //   client
+          //     .sendText(
+          //       `${telefone}@c.us`,
+          //       'Olá, voce foi cadastrado com sucesso no sistema!'
+          //     )
+          //     .then((result) => {})
+          //     .catch((erro) => {
+          //       console.error('Error when sending: ', erro); //return object error
+          //     });
+          // }
           if (dependentes && dependentes.length > 0) {
             // se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {
@@ -166,46 +232,41 @@ router.post(
           res.status(200).json({
             message: 'Candidato cadastrado com sucesso!',
             nomeCompleto: nomeCompleto,
+            similaridadeIdentidade: similaridadeIdentidade,
+            similaridadeCnh: similaridadeCnh,
+            similaridadeReservista: similaridadeReservista,
           });
         }
       }
     );
   }
 );
-router.get('/',async (req, res) => {
-    // Rota que cadastra um report no banco de dados
-    const connection = createConnection();
-    connection.query(
-      'select * from CANDIDATO',
-      (err, result) => {
-        if (err) {
-          console.error('Erro ao pesquisar candidatos:', err);
-          res
-            .status(500)
-            .json({ error: 'Erro ao pesquisar candidatos' });
-        } else {
-          const resultado = result;
-          
-          res.send(resultado);
-        }
-      }
-    );
-  }
-);
+router.get('/', async (req, res) => {
+  // Rota que cadastra um report no banco de dados
+  const connection = createConnection();
+  connection.query('select * from CANDIDATO', (err, result) => {
+    if (err) {
+      console.error('Erro ao pesquisar candidatos:', err);
+      res.status(500).json({ error: 'Erro ao pesquisar candidatos' });
+    } else {
+      const resultado = result;
+
+      res.send(resultado);
+    }
+  });
+});
 router.put('/aprovaCandidato', (req, res) => {
   const candidatoId = req.query.id;
-  const query =
-    "UPDATE CANDIDATO SET admitido = 1 where id = ?";
-    const connection = createConnection();
-    connection.query(query, candidatoId, (err, result) => {
-      if (err) {
-        console.error('Erro ao atualizar candidato:', err.message);
-        return;
-      }
-      console.log('Candidato atualizado com sucesso.');
-       res.status(200).json({message :"Sucesso!"})
-      
-    });
+  const query = 'UPDATE CANDIDATO SET admitido = 1 where id = ?';
+  const connection = createConnection();
+  connection.query(query, candidatoId, (err, result) => {
+    if (err) {
+      console.error('Erro ao atualizar candidato:', err.message);
+      return;
+    }
+    console.log('Candidato atualizado com sucesso.');
+    res.status(200).json({ message: 'Sucesso!' });
+  });
 });
 
 router.get('/listarFuncoes', async (req, res) => {

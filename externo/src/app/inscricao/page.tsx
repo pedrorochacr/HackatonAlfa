@@ -13,6 +13,7 @@ import { otherData } from '@/forms/other';
 import { archiveData } from '@/forms/archive';
 import { useEffect, useState } from 'react';
 import { CandidateForm, candidateSchema } from '../../../schemas/candidate';
+import { useRouter } from 'next/navigation';
 
 type Function = {
   id: number;
@@ -33,6 +34,9 @@ export default function SubscriptionPage() {
   });
   const [functions, setFunctions] = useState<Function[]>([]);
   const watchParenteOuAmigo = watch('parenteOuAmigo');
+  const [similaridades, setSimilaridades] = useState<string[]>([50, 10, 20]);
+  const [finished, setFinished] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetch('http://localhost:4000/candidato/listarFuncoes')
@@ -86,8 +90,17 @@ export default function SubscriptionPage() {
 
     if (res.ok) {
       alert('Candidato cadastrado com sucesso');
+      const json = await res.json();
+      setSimilaridades([
+        json.similaridadeIdentidade,
+        json.similaridadeCnh,
+        json.similaridadeReservista,
+      ]);
+
+      setFinished(true);
     } else {
-      alert('Erro ao cadastrar candidato');
+      const json = await res.json();
+      alert(json.error);
     }
   }
 
@@ -411,6 +424,7 @@ export default function SubscriptionPage() {
             </div>
           )}
         </section>
+        {}
         <section className="flex flex-col">
           <div className="flex flex-row">
             <p className="mr-2">Dependentes</p>
@@ -502,10 +516,39 @@ export default function SubscriptionPage() {
             </span>
           )}
         </section>
-        <button type="submit" className="btn btn-primary w-full">
-          Enviar
-        </button>
+        {!finished && (
+          <button type="submit" className="btn btn-primary w-full">
+            Enviar
+          </button>
+        )}
       </form>
+      {finished && (
+        <button
+          className="btn w-full"
+          onClick={() => window.my_modal_1.showModal()}
+        >
+          Analise dos documentos
+        </button>
+      )}
+
+      <dialog id="my_modal_1" className="modal">
+        <form method="dialog" className="modal-box">
+          <h3 className="font-bold text-lg">
+            Resultados das análises dos documentos
+          </h3>
+          <h4 className='mb-4'>Porcentagem de similaridade em relação ao modelo utilizando OCR:</h4>
+          {similaridades && similaridades.length > 0 && (
+            <>
+              <p>Identidade: {similaridades[0]}%</p>
+              <p>Cnh: {similaridades[1]}%</p>
+              <p>Reservista: {similaridades[2]}%</p>
+            </>
+          )}
+          <div className="modal-action">
+            <button className="btn">Fechar</button>
+          </div>
+        </form>
+      </dialog>
     </main>
   );
 }
