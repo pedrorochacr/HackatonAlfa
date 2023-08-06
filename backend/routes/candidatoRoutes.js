@@ -196,29 +196,7 @@ router.post(
         } else {
           console.log('Candidato cadastrado com sucesso!');
           // se o candidato for cadastrado, é enviada uma mensagem no whatssApp para ele
-          // const venom = require('venom-bot');
-          // venom
-          //   .create({
-          //     session: 'bot',
-          //     headless: false,
-          //   })
-          //   .then((client) => start(client))
-          //   .catch((erro) => {
-          //     console.log(erro);
-          //   });
-          // function start(client) {
-          //   telefone = telefone1.replace(/"/g, '');
-
-          //   client
-          //     .sendText(
-          //       `${telefone}@c.us`,
-          //       'Olá, voce foi cadastrado com sucesso no sistema!'
-          //     )
-          //     .then((result) => {})
-          //     .catch((erro) => {
-          //       console.error('Error when sending: ', erro); //return object error
-          //     });
-          // }
+          
           if (dependentes && dependentes.length > 0) {
             // Se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {
@@ -258,16 +236,39 @@ router.get('/', async (req, res) => {
     }
   });
 });
-router.put('/aprovaCandidato', (req, res) => {
-  const candidatoId = req.query.id;
+router.post('/aprovaCandidato', (req, res) => {
+  const candidato = req.body;
   const query = 'UPDATE CANDIDATO SET admitido = 1 where id = ?';
   const connection = createConnection();
-  connection.query(query, candidatoId, (err, result) => {
+  connection.query(query, candidato.id, (err, result) => {
     if (err) {
       console.error('Erro ao atualizar candidato:', err.message);
       return;
     }
     console.log('Candidato atualizado com sucesso.');
+    const venom = require('venom-bot');
+    venom
+      .create({
+        session: 'bot',
+        headless: false,
+      })
+      .then((client) => start(client))
+      .catch((erro) => {
+        console.log(erro);
+      });
+    function start(client) {
+      telefone = candidato.telefone1.replace(/"/g, '');
+
+      client
+        .sendText(
+          `${telefone}@c.us`,
+          'Olá, voce foi aprovado no processo seletivo!'
+        )
+        .then((result) => {})
+        .catch((erro) => {
+          console.error('Error when sending: ', erro); //return object error
+        });
+    }
     res.status(200).json({ message: 'Sucesso!' });
   });
 });

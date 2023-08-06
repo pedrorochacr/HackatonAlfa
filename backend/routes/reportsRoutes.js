@@ -63,7 +63,7 @@ router.post(
   }
 );
 router.get('/',async (req, res) => {
-  // Rota que cadastra um report no banco de dados
+  // Rota que pesquisa os reports no banco de dados
   const connection = createConnection();
   connection.query(
     'select * from reports',
