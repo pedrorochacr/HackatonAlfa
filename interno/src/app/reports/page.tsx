@@ -2,8 +2,8 @@
 import React, { SetStateAction, useState } from 'react';
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import TabelaReports from '../components/Tabelas/ReportsTable';
 
-import TabelaReports from '@/src/components/Tabelas/ReportsTable';
 
 
 export default function ReportsPage() {
