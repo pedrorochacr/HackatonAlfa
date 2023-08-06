@@ -31,6 +31,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     jwt: ({ token, user }) => {
+      console.log(user)
       if (user) {
         token.id = user.id;
         token.nome = user.nome;
@@ -40,6 +41,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: ({ session, token }) => {
+      console.log(session)
       if (token) {
         session.user.id = token.id as string;
         session.user.nome = token.nome as string;
