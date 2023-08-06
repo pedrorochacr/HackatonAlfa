@@ -6,7 +6,7 @@ export const birthData: FormInput[] = [
     element: 'input',
     inputType: 'date',
     label: 'Data de nascimento',
-    placeholder: '',
+    placeholder: 'dd/mm/aaaa',
   },
   {
     name: 'nacionalidade',
