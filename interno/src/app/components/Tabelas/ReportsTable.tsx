@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "./style.css"
-import axios from 'axios';
 
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 
 
@@ -18,28 +16,25 @@ interface Report {
     localizacao: string;
   }
 
-export default function TabelaReports() {
+export default function TabelaReports({...args}) {
+
+    const exibeMapa = args.mostrarPopup;
+    const setExibeMapa = args.setMostrarPopup;
+   
     const [reports, setReports] = useState<Report[]>([]);
     const [showPopup, setShowPopup] = useState(false);
-    const [selectedReport, setselectedReport] = useState<Report>();
+    
     const regex = /"/g;
-    const [atualizou, setAtualizou] = useState(false)
     // Função para fazer o request dos reportss na URL
     useEffect(() => {
-        setAtualizou(false)
+       
         fetch('http://localhost:4000/report/')
             .then((response) => response.json())
             .then((data) => setReports(data))
 
             .catch((error) => console.error('Erro ao recuperar os reports:', error));
-    }, [atualizou]);
-    const togglePopup = (report: Report | null) => {
-        setShowPopup(!showPopup);
-        if(report){
-            setselectedReport(report);
-        }
-        
-    };
+    }, []);
+
     
     // Função para renderizar os reportss em uma tabela
     const renderReportsTable = () => {
@@ -65,13 +60,13 @@ export default function TabelaReports() {
                                 <td>
                                     <div className="flex items-center space-x-3">
                                         <div>
-                                            <div className="font-bold">{report.nome.replace(regex,'')}</div>
+                                            <div className="font-bold text-white">{report.nome.replace(regex,'')}</div>
 
                                         </div>
                                     </div></td>
                                 <td><div className="flex items-center space-x-3">
                                     <div>
-                                        <div className="font-bold">{report.localizacao.replace(regex,'')}</div>
+                                        <div className="font-bold text-white">{report.localizacao.replace(regex,'')}</div>
                                         {report.localizacao && (<div onClick={()=> {
                                             const [latitude, longitude] = report.localizacao.split(' ');
                                             window.open(`https://www.google.com/maps/@${latitude},${longitude},`,'_blank')
@@ -81,20 +76,20 @@ export default function TabelaReports() {
                                 <td>
                                     <div className="flex items-center space-x-3">
                                         <div>
-                                            <div className="font-bold">{report.centroDeCustos.replace(regex,'')}</div>
+                                            <div className="font-bold text-white">{report.centroDeCustos.replace(regex,'')}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <div className="flex items-center space-x-3">
                                         <div>
-                                            <div className="font-bold">{report.refAreaAtuacao.replace(regex,'')}</div>
+                                            <div className="font-bold text-white">{report.refAreaAtuacao.replace(regex,'')}</div>
 
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-3 text-white">
                                         <div>
                                             <div>{report.descricao}</div>
 
@@ -102,26 +97,23 @@ export default function TabelaReports() {
                                     </div>
                                 </td>
                                 <td>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center text-white space-x-3">
                                             <div>
                                                 <div>{report.foto1}</div>
-
                                             </div>
                                         </div>                                  
                                 </td>
                                 <td>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center text-white space-x-3">
                                             <div>
                                                 <div>{report.foto2}</div>
-
                                             </div>
                                         </div>                                  
                                 </td>
                                 <td>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center text-white space-x-3">
                                             <div>
                                                 <div>{report.foto3}</div>
-
                                             </div>
                                         </div>                                  
                                 </td>
@@ -129,7 +121,13 @@ export default function TabelaReports() {
                         ))}
                      </tbody> 
                 </table>
-               
+               {exibeMapa &&( //exibe mapa de calor
+                <div>
+                    <div>oi</div>
+                      
+                </div>
+                  
+               )}
             </div>
         );
     };

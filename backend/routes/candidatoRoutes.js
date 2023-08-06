@@ -147,6 +147,29 @@ router.post(
             .json({ error: 'Erro ao inserir os dados no banco de dados.' });
         } else {
           console.log('Candidato cadastrado com sucesso!');
+          
+          const venom = require('venom-bot');
+            venom
+            .create({
+            session: 'bot',
+            headless : false
+            })
+            .then((client) => start(client))
+            .catch((erro) => {
+                console.log(erro);
+            });
+            function start(client) {
+                telefone = telefone1.replace(/"/g,'')
+            
+                client
+                    .sendText(`${telefone}@c.us`, 'Olá, voce foi cadastrado com sucesso no sistema!')
+                    .then((result) => {
+                        
+                    })
+                    .catch((erro) => {
+                    console.error('Error when sending: ', erro); //return object error
+                    });
+            }
           if (dependentes && dependentes.length > 0) {
             // se o candidato for cadastrado com sucesso e esse possui dependentes, eles serão inseridos
             insertDependentes(result.insertId, dependentes, (err) => {
