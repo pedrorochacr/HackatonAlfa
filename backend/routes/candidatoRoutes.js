@@ -236,6 +236,7 @@ router.get('/', async (req, res) => {
     }
   });
 });
+
 router.post('/aprovaCandidato', (req, res) => {
   const candidato = req.body;
   const query = 'UPDATE CANDIDATO SET admitido = 1 where id = ?';
@@ -261,7 +262,7 @@ router.post('/aprovaCandidato', (req, res) => {
 
       client
         .sendText(
-          `${telefone}@c.us`,
+          `55${telefone}@c.us`,
           'Olá, voce foi aprovado no processo seletivo!'
         )
         .then((result) => {})
